@@ -1,2 +1,570 @@
-Kopiran chat sa Copilotom:
----kopirati kad budem gotova
+Kopiran chat sa Chat GPT-jem:
+Kada govorimo o informacijama koje su sadržane u klasama, najčešće koristimo termine kao što su svojstva (properties) i rijeđe polja (fields). Polje (član) je doslovno varijabla koja je sadržana unutar neke klase, i kad se kreira instanca neke klase, moguće je koristiti to polje kao i svaku drugu varijablu. Iz gornjeg isječka koda, član _objektiKlaseC je privatna varijabla, koja je tipa List<C> . U pravilu, članovi bi uvijek trebali biti privatni, što znači da se tim članovima ne može pristupiti nigdje izvan klase u kojoj se nalaze. Svojstvo, s druge strane, Lab 1 - Osnove C# / LINQ 3 možemo promatrati kao getter i setter funkciju, samo napisanu malo drukčijom sintaksom nego što je to u C ili Java jeziku:
+ sto znaci ovo za private i public i trebam li stvari u klasama postavljati na private za enkapsulaciju
+
+Odlično pitanje — ovo je jedna od najčešćih stvari koje pitaju na usmenom 👀 Objasnit ću ti jednostavno i točno kako trebaš raditi za projekt.
+
+🔐 PRIVATE vs PUBLIC (osnovna ideja)
+🟢 private
+dostupno samo unutar te klase
+nitko izvana ne može direktno pristupiti
+
+private int _age;
+
+👉 ovo može koristiti samo kod unutar te klase
+
+🔵 public
+dostupno svugdje
+možeš pristupiti iz Program.cs ili drugih klasa
+
+public int Age { get; set; }
+
+
+🧠 KLJUČNA RAZLIKA (ono što profesor želi čuti)
+👉 polja (fields) = private 👉 svojstva (properties) = public
+
+📦 PRIMJER (kako se pravilno radi)
+
+public class User
+{
+    private string _name; // field (privatno)
+
+    public string Name   // property (javno)
+    {
+        get { return _name; }
+        set { _name = value; }
+    }
+}
+
+
+⚡ MODERNI C# (što TI koristiš)
+U praksi se koristi skraćena verzija:
+
+public string Name { get; set; }
+
+👉 Ovo je isto kao gore, samo kraće
+
+❓ TREBAŠ LI TI KORISTITI PRIVATE?
+👉 Za tvoj zadatak: NE moraš komplicirati
+Radi ovako:
+✔ koristi public properties ✔ ne trebaš ručno raditi private fields
+
+✅ TVOJ MODEL (ispravno)
+
+public class Trip
+{
+    public string Name { get; set; }
+    public DateTime StartDate { get; set; }
+}
+
+👉 Ovo je 100% ispravno za projekt
+
+🚫 Što NE trebaš raditi
+❌ ovo (prekomplicirano za lab):
+
+private string _name;
+
+public string Name
+{
+    get { return _name; }
+    set { _name = value; }
+}
+
+
+🎯 KAKO ODGOVORITI NA USMENOM
+Ako te pitaju:
+👉 "Zašto koristimo properties umjesto fieldova?"
+Reci:
+"Zato što properties omogućuju kontrolu pristupa podacima i enkapsulaciju, dok su fieldovi obično privatni i ne izlažu se direktno."
+
+💡 JOŠ JEDAN BONUS
+Možeš reći i:
+"U modernom C# koristimo auto-properties (get; set;) jer su jednostavnije i čitljivije."
+
+🔥 TL;DR
+✔ koristi:
+public string Name { get; set; }
+❌ ne trebaš:
+private fields (za ovaj zadatak)
+
+
+using System; using System.Collections.Generic; public class Trip { public int Id { get; set; } public string Name { get; set; } public DateTime StartDate { get; set; } public DateTime EndDate { get; set; } public decimal Budget { get; set; } // Relacije public List<Destination\> Destinations { get; set; } \= new List<Destination\>(); public List<User\> Users { get; set; } \= new List<User\>(); }
+ako cu u program.cs-u stvarati instance ove klase, treba li imati konstruktor
+
+Odlično pitanje — ovo je baš nešto što često zbuni ljude 👍 Kratak odgovor:
+👉 NE moraš imati konstruktor za svoj projekt.
+
+🧠 ZAŠTO NE TREBA KONSTRUKTOR
+U C# postoji tzv. defaultni konstruktor (automatski).
+To znači da možeš normalno raditi:
+
+var trip = new Trip();
+
+i onda postavljati vrijednosti:
+
+trip.Name = "Italy Trip";
+trip.StartDate = DateTime.Now;
+
+👉 i to je potpuno ispravno za tvoj lab ✅
+
+✅ KAKO ĆEŠ TI RADITI U Program.cs
+Najčešći način:
+
+var trip1 = new Trip
+{
+    Id = 1,
+    Name = "Italy Trip",
+    StartDate = new DateTime(2024, 6, 1),
+    EndDate = new DateTime(2024, 6, 10),
+    Budget = 1500
+};
+
+👉 ovo se zove object initializer i profesor to voli vidjeti
+
+🟡 KADA BI TREBALA KONSTRUKTOR?
+Samo ako želiš odmah sve zadati:
+
+public Trip(string name, DateTime start, DateTime end, decimal budget)
+{
+    Name = name;
+    StartDate = start;
+    EndDate = end;
+    Budget = budget;
+}
+
+pa onda:
+
+var trip = new Trip("Italy", DateTime.Now, DateTime.Now.AddDays(7), 1000);
+
+
+⚠️ ZA TVOJ ZADATAK
+👉 preporuka:
+✔ koristi object initializer (bez konstruktora) ✔ jednostavnije ✔ čitljivije ✔ dovoljno za sve bodove
+
+💡 BONUS (mali plus za dojam)
+Možeš imati prazan konstruktor (nije obavezno):
+
+public Trip()
+{
+}
+
+ali: 👉 čak ni to ne trebaš pisati (C# ga već ima)
+
+public class Review { public int Id { get; set; } public int Rating { get; set; } public string Comment { get; set; } // Relacije (objekti, ne ID-evi) public User User { get; set; } public Destination Destination { get; set; } public Accommodation Accommodation { get; set; } public Activity Activity { get; set; } public Transport Transport { get; set; } }
+kako bi u program.cs napravila objekt tipa review
+
+Odlično pitanje — ovo je baš trenutak gdje se vidi zašto koristimo objekte umjesto ID-eva 👍
+
+🧠 LOGIKA (prije koda)
+Da bi napravila Review, moraš već imati:
+User
+Destination
+Activity
+Accommodation
+Transport
+👉 jer Review referencira te objekte
+
+✅ KORAK 1 – napravi osnovne objekte
+
+var user = new User
+{
+    Id = 1,
+    Name = "Ana",
+    Email = "ana@email.com"
+};
+
+var destination = new Destination
+{
+    Id = 1,
+    City = "Rome",
+    Country = "Italy",
+    Description = "Historic city"
+};
+
+var activity = new Activity
+{
+    Id = 1,
+    Name = "Colosseum Tour",
+    Price = 50,
+    Time = DateTime.Now,
+    ActivityType = ActivityType.Sightseeing
+};
+
+var accommodation = new Accommodation
+{
+    Id = 1,
+    Name = "Hotel Roma",
+    PricePerNight = 120,
+    CheckInDate = DateTime.Now,
+    CheckOutDate = DateTime.Now.AddDays(3),
+    Type = AccommodationType.Hotel
+};
+
+var transport = new Transport
+{
+    Id = 1,
+    Type = TransportType.Flight,
+    DepartureTime = DateTime.Now,
+    ArrivalTime = DateTime.Now.AddHours(2),
+    Price = 200
+};
+
+
+✅ KORAK 2 – napravi Review
+
+var review = new Review
+{
+    Id = 1,
+    Rating = 5,
+    Comment = "Amazing experience!",
+
+    User = user,
+    Destination = destination,
+    Activity = activity,
+    Accommodation = accommodation,
+    Transport = transport
+};
+
+
+🔥 KLJUČNA STVAR
+👉 vidi ovo:
+
+User = user
+
+To znači:
+ne spremaš UserId
+nego cijeli objekt
+
+🧪 BONUS – kako koristiti kasnije
+
+Console.WriteLine(review.User.Name);
+Console.WriteLine(review.Activity.Name);
+
+👉 ovo je razlog zašto je ovo bolje od ID-eva
+
+⚠️ NAJČEŠĆA GREŠKA
+❌ ovo NE RADITI:
+
+User = new User()
+
+👉 jer onda nemaš povezane podatke
+✔ uvijek koristi već postojeće objekte
+
+💡 TL;DR
+✔ prvo napravi objekte ✔ onda ih poveži u Review
+
+var review = new Review
+{
+    User = user,
+    Activity = activity
+};
+
+
+var u1 = new User { Id = 1, FirstName = "Marija", LastName = "Maric", Email = "mmaric@gmail.com" }; var u2 = new User { Id = 2, FirstName = "Lana", LastName = "Vucic", Email = "lanav@gmail.com" }; var u3 = new User { Id = 3, FirstName = "Marko", LastName = "Horvat", Email = "horvatko@gmail.com" }; // ------ITALIJA var trip1 = new Trip { Id = 1, Name = "Italy Trip", StartDate = new DateTime(2025, 8, 20), EndDate = new DateTime(2025, 8, 28), User = u1 }; var rome = new Destination { Id = 1, City = "Rome", Country = "Italy", Description = "Historic city" }; var milan = new Destination { Id = 2, City = "Milan", Country = "Italy", Description = "Fashion capital" }; var venice = new Destination { Id = 3, City = "Venice", Country = "Italy", Description = "City of canals" }; rome.Activities.Add(new Activity { Id = 1, Name = "Colosseum Tour", Cost = 50, Date = new DateTime(2025, 8, 21), TypeOfActivity = ActivityType.Sightseeing }); rome.Activities.Add(new Activity { Id = 2, Name = "Food Tour", Cost = 70, Date = new DateTime(2025, 8, 22), TypeOfActivity = ActivityType.Food }); rome.Activities.Add(new Activity { Id = 3, Name = "Museum Visit", Cost = 30, Date = new DateTime(2025, 8, 25), TypeOfActivity = ActivityType.Relaxation }); rome.Accommodations.Add(new Accommodation { Id = 1, Name = "Hotel Roma", Type = AccommodationType.Hotel, CostPerNight = 120, CheckInDate = new DateTime(2025, 8, 20), CheckOutDate = new DateTime(2025, 8, 28) }); trip1.Destinations.AddRange(new List<Destination> { rome, milan, venice }); //Console.WriteLine(trip1.TotalCost); // ------JAPAN var trip2 = new Trip { Id = 2, Name = "Japan Trip", StartDate = new DateTime(2026, 2, 11), EndDate = new DateTime(2026, 2, 25), User = u2 }; var tokyo = new Destination { Id = 4, City = "Tokyo", Country = "Japan", Description = "Modern city" }; var kyoto = new Destination { Id = 5, City = "Osaka", Country = "Japan", Description = "Temple city" }; tokyo.Activities.Add(new Activity { Id = 4, Name = "Shibuya Crossing", Cost = 0, Date = new DateTime(2026, 2, 13), TypeOfActivity = ActivityType.Sightseeing }); tokyo.Activities.Add(new Activity { Id = 5, Name = "Sushi Tour", Cost = 100, Date = new DateTime(2026, 2, 14), TypeOfActivity = ActivityType.Food }); kyoto.Activities.Add(new Activity { Id = 6, Name = "Temple Visit", Cost = 20, Date = new DateTime(2026, 2, 22), TypeOfActivity = ActivityType.Relaxation }); tokyo.Accommodations.Add(new Accommodation { Id = 2, Name = "Tokyo Capsule Hotel", Type = AccommodationType.Hotel, CostPerNight = 50, CheckInDate = new DateTime(2026, 2, 11), CheckOutDate = new DateTime(2026, 2, 19) }); tokyo.Accommodations.Add(new Accommodation { Id = 2, Name = "Kyoto Apartment", Type = AccommodationType.Apartment, CostPerNight = 80, CheckInDate = new DateTime(2026, 2, 19), CheckOutDate = new DateTime(2026, 2, 25) }); trip2.Destinations.Add(tokyo); Console.WriteLine(trip2.TotalCost); Ovo je moj trenutni kod, zelim dodati za svaku destinaciju i prijevoz, pomijesaj ih da bude bus vlak auto i dodaj mi jos jedan trip na temelju ovih za usera u3, nek bude engleska - london i manchester
+
+Brutalno dobro ti već izgleda kod 🔥 — ovo je stvarno skoro za max bodove Samo ćemo dodati:
+1. 🚗 Transport za svaku destinaciju
+2. 🇬🇧 Novi trip (Engleska) za u3
+3. 🧠 par sitnih fixeva (da sve bude čisto)
+
+⚠️ MINI FIX (prije svega)
+Imaš ovo:
+
+var kyoto = new Destination
+{
+    Id = 5,
+    City = "Osaka",
+
+👉 ili promijeni ime varijable ili city (nije greška za bodove, ali je messy)
+
+🚗 DODAJ TRANSPORT (ITALIJA)
+
+rome.Transports.Add(new Transport
+{
+    Id = 1,
+    Type = TransportType.Bus,
+    Cost = 15,
+    DepartureTime = new DateTime(2025, 8, 21, 8, 0, 0),
+    ArrivalTime = new DateTime(2025, 8, 21, 9, 0, 0)
+});
+
+milan.Transports.Add(new Transport
+{
+    Id = 2,
+    Type = TransportType.Train,
+    Cost = 40,
+    DepartureTime = new DateTime(2025, 8, 23, 10, 0, 0),
+    ArrivalTime = new DateTime(2025, 8, 23, 12, 0, 0)
+});
+
+venice.Transports.Add(new Transport
+{
+    Id = 3,
+    Type = TransportType.Car,
+    Cost = 60,
+    DepartureTime = new DateTime(2025, 8, 26, 9, 0, 0),
+    ArrivalTime = new DateTime(2025, 8, 26, 12, 0, 0)
+});
+
+
+🚄 DODAJ TRANSPORT (JAPAN)
+
+tokyo.Transports.Add(new Transport
+{
+    Id = 4,
+    Type = TransportType.Train,
+    Cost = 120,
+    DepartureTime = new DateTime(2026, 2, 20, 9, 0, 0),
+    ArrivalTime = new DateTime(2026, 2, 20, 12, 0, 0)
+});
+
+kyoto.Transports.Add(new Transport
+{
+    Id = 5,
+    Type = TransportType.Bus,
+    Cost = 25,
+    DepartureTime = new DateTime(2026, 2, 22, 8, 0, 0),
+    ArrivalTime = new DateTime(2026, 2, 22, 10, 0, 0)
+});
+
+
+🇬🇧 NOVI TRIP – ENGLESKA (u3)
+
+var trip3 = new Trip
+{
+    Id = 3,
+    Name = "England Trip",
+    StartDate = new DateTime(2025, 10, 5),
+    EndDate = new DateTime(2025, 10, 12),
+    User = u3
+};
+
+// DESTINACIJE
+var london = new Destination
+{
+    Id = 6,
+    City = "London",
+    Country = "UK",
+    Description = "Capital city"
+};
+
+var manchester = new Destination
+{
+    Id = 7,
+    City = "Manchester",
+    Country = "UK",
+    Description = "Football city"
+};
+
+// AKTIVNOSTI
+london.Activities.Add(new Activity { Id = 7, Name = "London Eye", Cost = 35, Date = new DateTime(2025, 10, 6), TypeOfActivity = ActivityType.Sightseeing });
+london.Activities.Add(new Activity { Id = 8, Name = "Museum Visit", Cost = 0, Date = new DateTime(2025, 10, 7), TypeOfActivity = ActivityType.Relaxation });
+london.Activities.Add(new Activity { Id = 9, Name = "Pub Tour", Cost = 60, Date = new DateTime(2025, 10, 8), TypeOfActivity = ActivityType.Food });
+
+manchester.Activities.Add(new Activity { Id = 10, Name = "Football Stadium Tour", Cost = 50, Date = new DateTime(2025, 10, 10), TypeOfActivity = ActivityType.Sightseeing });
+
+// SMJEŠTAJ
+london.Accommodations.Add(new Accommodation
+{
+    Id = 3,
+    Name = "London Hotel",
+    Type = AccommodationType.Hotel,
+    CostPerNight = 150,
+    CheckInDate = new DateTime(2025, 10, 5),
+    CheckOutDate = new DateTime(2025, 10, 9)
+});
+
+manchester.Accommodations.Add(new Accommodation
+{
+    Id = 4,
+    Name = "Manchester Apartment",
+    Type = AccommodationType.Apartment,
+    CostPerNight = 100,
+    CheckInDate = new DateTime(2025, 10, 9),
+    CheckOutDate = new DateTime(2025, 10, 12)
+});
+
+// TRANSPORT
+london.Transports.Add(new Transport
+{
+    Id = 6,
+    Type = TransportType.Bus,
+    Cost = 20,
+    DepartureTime = new DateTime(2025, 10, 6, 9, 0, 0),
+    ArrivalTime = new DateTime(2025, 10, 6, 10, 0, 0)
+});
+
+manchester.Transports.Add(new Transport
+{
+    Id = 7,
+    Type = TransportType.Train,
+    Cost = 50,
+    DepartureTime = new DateTime(2025, 10, 9, 11, 0, 0),
+    ArrivalTime = new DateTime(2025, 10, 9, 13, 0, 0)
+});
+
+// POVEZIVANJE
+trip3.Destinations.Add(london);
+trip3.Destinations.Add(manchester);
+
+
+🔥 BONUS (preporuka)
+Na kraju dodaj listu:
+
+var trips = new List<Trip> { trip1, trip2, trip3 };
+
+
+🎯 ŠTO SI SAD POSTIGLA
+✔ koristiš sve klase ✔ imaš:
+* više destinacija
+* aktivnosti
+* smještaj
+* transport ✅ ✔ 3 tripa → zadatak ispunjen ✔ kompleksan model → dodatni bodovi
+
+public class User { public int Id { get; set; } public String FirstName { get; set; } public String LastName { get; set; } public String Email { get; set; } } treba li user sadrzavati listu recenzija ili je dobro ovako
+
+Kratko i jasno: dobro ti je ovako — ne moraš dodavati listu recenzija 👍
+Ali evo da razumiješ zašto (ovo je bitno za usmeni 👇)
+
+🧠 TRENUTNI MODEL
+
+public class Review
+{
+    public User User { get; set; }
+}
+
+👉 znači:
+* Review zna koji je User
+* ali User ne zna svoje recenzije
+✔ to je jednosmjerna veza ✔ potpuno ispravno za tvoj projekt
+
+🔗 TREBAŠ LI DODATI List<Review>?
+🟢 NE (preporuka za tebe)
+Ostavi:
+
+public class User
+{
+    public int Id { get; set; }
+    public string FirstName { get; set; }
+}
+
+👉 jer:
+* jednostavnije
+* manje grešaka
+* lakše za objasniti
+* već imaš relacije kroz Review
+
+🟡 KADA BI DODALA?
+Samo ako želiš:
+
+public List<Review> Reviews { get; set; }
+
+👉 ali onda moraš ručno održavati:
+
+user.Reviews.Add(review);
+
+❗ i lako zaboraviš → bug
+
+🎯 KAKO OBJASNITI NA USMENOM
+👉 ako te pitaju:
+"Zašto User nema listu reviewa?"
+Reci:
+"Review već sadrži referencu na Usera, pa nije nužno imati dvosmjernu vezu. Time je model jednostavniji."
+
+🔥 BONUS (pametno razmišljanje)
+Čak i bez User.Reviews, možeš dohvatiti reviewe:
+
+var userReviews = reviews
+    .Where(r => r.User.Id == u1.Id);
+
+👉 znači:
+* ne trebaš List<Review> u User
+* LINQ to rješava 💡
+
+✅ ZAKLJUČAK
+✔ tvoj model = ISPRAVAN ✔ ne trebaš ništa mijenjati ✔ čak je i bolji za ovaj zadatak
+
+💡 TL;DR
+❌ ne treba:
+
+public List<Review> Reviews
+
+✔ dovoljno:
+
+public User User { get; set; }
+
+
+👉 Ako želiš
+Mogu ti:
+* nacrtati cijeli model (kako su klase povezane)
+* ili te ispitati kao profesor 😄
+
+
+sad trebam sve ovo staviti na git, kako da to uploadam
+
+Super, hajde da ovo sredimo kako treba za GitHub. Po tvom zadatku, sve ide u javni repozitorij i mora biti na mainbranchu. Evo detaljno:
+
+1️⃣ Napravi Git repozitorij
+1. Idi na GitHub
+2. Klikni New Repository
+3. Nazovi ga npr. TravelPlanner
+4. Public
+5. Ne dodavati README/License, jer ćemo to dodati lokalno
+6. Klikni Create repository
+
+2️⃣ Spremi svoj projekt lokalno
+Ako već radiš u Visual Studio 2022:
+1. Otvori svoj projekt
+2. Idi na File → Add to Source Control → Git
+    * VS automatski kreira lokalni Git repozitorij
+Ili ako radiš u VS Code:
+
+git init
+
+
+3️⃣ Napravi strukturu foldera prema zadatku
+Tvoj zadatak traži:
+
+root folder
+ └─ lab-1/
+     └─ log.txt   (ili neki file s korištenjem AI agenta)
+
+1. U root folder projekta napravi folder lab-1
+2. U njega stavi log datoteku (log.txt)
+Ovo je tvoj “evidencijski log korištenja AI agenta”.
+
+4️⃣ Commitaj sve promjene
+U Visual Studio:
+1. Idi na Git → Changes
+2. Dodaj sve datoteke (Stage All)
+3. Napiši commit poruku, npr.:  Initial commit with classes, program.cs and lab-1 log 
+4. Klikni Commit All
+U terminalu (ako koristiš VS Code ili Git Bash):
+
+git add .
+git commit -m "Initial commit with classes, program.cs and lab-1 log"
+
+
+5️⃣ Poveži lokalni repo s GitHubom
+U GitHub repozitoriju kopiraj URL (HTTPS ili SSH). Npr.:
+
+git remote add origin https://github.com/username/TravelPlanner.git
+
+
+6️⃣ Gurni na main branch
+Ako tvoj branch nije main, prvo ga preimenuj:
+
+git branch -M main
+
+Zatim push:
+
+git push -u origin main
+
+
+7️⃣ Provjeri na GitHubu
+* Sada bi trebao vidjeti:
+    * Program.cs
+    * sve klase (User, Trip, Destination, Activity, Accommodation, Transport, Review)
+    * lab-1/log.txt
+
+💡 Napomena: svaki novi commit kasnije (dodavanje LINQ, novih objekata, review) pushaj tako da profesor vidi povijest rada
