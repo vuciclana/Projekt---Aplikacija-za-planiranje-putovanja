@@ -1,4 +1,195 @@
-Kopiran chat sa Chat GPT-jem:
+Copilot:
+======================================================
+RAZGOVOR: C# i .NET 8 POMOĆ PRI PROGRAMIRANJU
+======================================================
+
+Pitanje 1:
+kako stvaram nove klase u visual studiu u c#
+
+Odgovor:
+Da bi stvorila novu C# klasu u Visual Studiju:
+1. Otvori Solution Explorer (View > Solution Explorer).
+2. Desni klik na projekt ili mapu gdje želiš dodati klasu.
+3. Odaberi Add > Class... (ili prečac Shift + Alt + C).
+4. Pazi da je označeno "Class".
+5. Upiši ime klase (npr. MyClass.cs) na dnu.
+6. Klikni Add.
+Visual Studio će stvoriti novu .cs datoteku s osnovnim predloškom.
+
+------------------------------------------------------
+
+Pitanje 2:
+Do i need to use namespaces in every class
+
+Odgovor:
+Nije strogo obavezno. Ako ga izostaviš, klasa pripada "globalnom namespaceu". 
+Ipak, jako je preporučljivo uvijek ih koristiti jer:
+1. Sprječavaju konflikte u imenima (tvoja klasa Trip vs. neka tuđa klasa Trip).
+2. Pomažu u organizaciji koda.
+Pro Tip: Budući da koristiš C# 12 (.NET 8), ne trebaš vitičaste zagrade za namespace. Možeš koristiti "file-scoped namespace" (npr. `namespace projekt_LV;`).
+
+------------------------------------------------------
+
+Pitanje 3:
+is this correct waay to write constructor, i did it this way in java programming when i would initialize class incstance in main, in this case Program.cs
+
+Odgovor:
+Da, 100% je ispravno. C# i Java imaju vrlo sličnu sintaksu za osnovne konstruktore.
+Kao alternativu, u C#-u možeš koristiti "Object Initializers" (inicijalizatore objekata). Ako tvoja svojstva imaju { get; set; }, ne trebaš uopće pisati konstruktor, već objekt stvaraš ovako: 
+`new Review { Id = 1, Rating = 5, Comment = "..." };`
+
+------------------------------------------------------
+
+Pitanje 4:
+is the last part = new List<Trip>() needed for this propertie
+
+Odgovor:
+Nije striktno obavezno za compiler, ali je jako preporučljivo kako bi se spriječile greške. Ako izostaviš `= new List<Trip>()`, lista će prema zadanim postavkama biti `null`. Kada pokušaš dodati element, program će se srušiti s `NullReferenceException`.
+Kratice u C# 12: Možeš pisati kraće, npr. `= new();` ili `= [];`.
+
+------------------------------------------------------
+
+Pitanje 5:
+how do i create enums
+
+Odgovor:
+Enum (enumeracija) predstavlja fiksni skup povezanih vrijednosti (npr. tipovi transporta).
+Stvaraš ga slično kao klasu, samo umjesto "class" pišeš "enum":
+public enum TransportType
+{
+    Bus,
+    Train,
+    Airplane
+}
+Zatim ga u klasi koristiš kao tip podatka za neko svojstvo.
+
+------------------------------------------------------
+
+Pitanje 6:
+if im gonna have more enums for different classes, can i create them all in one file or does every enum needs to have seperate file
+
+Odgovor:
+Možeš apsolutno sve enume staviti u jednu datoteku! C# prevoditelj ne mari koliko klasa ili enuma imaš u jednoj .cs datoteci. Često se u manjim projektima svi enumi stave u datoteku nazvanu npr. `Enums.cs` kako bi Solution Explorer ostao uredan.
+
+------------------------------------------------------
+
+Pitanje 7:
+is this a good way to write enum in a class
+public TransportType Type { get; set; }
+
+Odgovor:
+Da, to je savršen način za korištenje enuma u klasi. Omogućuje strogo tipiziranje (sprječava tipfelere u stringovima) i vrlo je čitljivo (koristit ćeš ga kao `myTransport.Type`).
+
+------------------------------------------------------
+
+Pitanje 8:
+how do i initialize dates with DateTime in c#
+
+Odgovor:
+Postoji nekoliko načina:
+1. Samo datum: `new DateTime(2024, 7, 15);`
+2. Datum i vrijeme: `new DateTime(2024, 7, 15, 14, 30, 0);`
+3. Trenutni datum i vrijeme: `DateTime.Now;` ili `DateTime.Today;`
+
+------------------------------------------------------
+
+Pitanje 9:
+kako bih napisala ovo na konzoli ako bih htjela ispis id-ja tripa imena, usera koji ga je objavio i njegovu ukupnu cijenu na kraju i koliko dana je trajao
+
+Odgovor:
+Najbolje je koristiti string interpolaciju (znak `$`) koja omogućava ubacivanje varijabli u tekst:
+int trajanjeUDanima = (trip1.EndDate - trip1.StartDate).Days;
+Console.WriteLine($"Trip ID: {trip1.Id}, Ime: {trip1.Name}, User: {trip1.User.FirstName} {trip1.User.LastName}, Ukupna cijena: {trip1.TotalCost}, Trajanje: {trajanjeUDanima} dana");
+
+------------------------------------------------------
+
+Pitanje 10:
+kako bih napisala linq upit u kojem bi se ispisalo najskuplje putovanje... izgleda isto ko streamovi u javi, jel tako koristimo i linq
+
+Odgovor:
+Da, LINQ je konceptualno vrlo sličan Streamovima u Javi!
+Za pronalazak najskupljeg putovanja možeš koristiti najnoviju metodu:
+`var najskupljePutovanje = trips.MaxBy(t => t.TotalCost);`
+
+------------------------------------------------------
+
+Pitanje 11:
+imala sam zamisljeno trips.OrderByDescending i onda uzeti FirstOrDefault, jel to dobar pristup
+
+Odgovor:
+Da, to je odličan i potpuno ispravan pristup! To je najklasičniji način (pogotovo prije nego je MaxBy dodan u .NET 6) i većina C# programera će ga odmah prepoznati kao standard. Nećeš primijetiti nikakvu razliku u performansama za ovakve liste.
+`var najskupljePutovanje = trips.OrderByDescending(t => t.TotalCost).FirstOrDefault();`
+
+------------------------------------------------------
+
+Pitanje 12:
+kako ove sve aktivnosti mogu ispisati na konzolu (.Where(a => a.Cost > 50))
+
+Odgovor:
+S obzirom da upit vraća kolekciju aktivnosti, moraš ih proći kroz petlju (foreach):
+foreach (var aktivnost in skupeAktivnosti)
+{
+    Console.WriteLine($"- Aktivnost: {aktivnost.Name}, Cijena: {aktivnost.Cost} eura");
+}
+
+------------------------------------------------------
+
+Pitanje 13 i 14:
+zelim ispisiati i iz kojeg su tripa / zelim samo trip name ispisati uz aktivnost
+
+Odgovor:
+Da bi zadržala i informaciju o putovanju iz kojeg aktivnost potječe, koristi LINQ Query sintaksu i "Anonimne tipove":
+var skupeAktivnosti = from t in trips
+                      from d in t.Destinations
+                      from a in d.Activities
+                      where a.Cost > 50
+                      select new 
+                      { 
+                          TripName = t.Name, 
+                          ActivityName = a.Name, 
+                          ActivityCost = a.Cost 
+                      };
+
+------------------------------------------------------
+
+Pitanje 15:
+select new { TripName = t.Name, ActivityName = a.Name, ActivityCost = a.Cost } sto radi ovaj dio linq upita
+
+Odgovor:
+Ovaj dio radi "projekciju". C# "u letu" stvara novu, privremenu (anonimnu) klasu samo za tvoje potrebe. Slično .map() funkciji u Javi - uzimaš samo određene dijelove iz velikih objekata (Trip i Activity) i spajaš ih u jedan manji, prilagođen isključivo za ispis.
+
+------------------------------------------------------
+
+Pitanje 16 i 17:
+zelim ostaviti originalni upit jer koristi izraze koje smo spominjali na predavanjima... i kako da ih poredam od najveceg do najmanjeg
+
+Odgovor:
+Da bi zadržala upite s predavanja (SelectMany, Where), a ujedno ispisala i ime putovanja i sortirala aktivnosti od najskuplje, primijeni upit unutar foreach petlje za svako putovanje:
+foreach (var trip in trips)
+{
+    var skupeAktivnosti = trip.Destinations
+        .SelectMany(d => d.Activities)
+        .Where(a => a.Cost > 50)
+        .OrderByDescending(a => a.Cost);
+
+    foreach (var aktivnost in skupeAktivnosti)
+    {
+         Console.WriteLine($"- {aktivnost.Name} ({aktivnost.Cost} eura) | Putovanje: {trip.Name}");
+    }
+}
+
+------------------------------------------------------
+
+Pitanje 18:
+var reviews = new List<Review>(); je li ovo dobar nacin za stvoriti listu recenzija, tako da kasnije mogu dodati sve u jednu listu
+
+Odgovor:
+Da, to je apsolutno savršen, ispravan i najčešći način. Korištenjem ključne riječi "var" compiler sam prepoznaje tip. Kasnije lako dodaješ elemente pomoću `reviews.Add(...)` ili `reviews.AddRange(...)`.
+Alternativni kraći načini u modernom C#-u su `List<Review> reviews = new();` ili `List<Review> reviews = [];`.
+
+
+
+Chat GPT:
 Kada govorimo o informacijama koje su sadržane u klasama, najčešće koristimo termine kao što su svojstva (properties) i rijeđe polja (fields). Polje (član) je doslovno varijabla koja je sadržana unutar neke klase, i kad se kreira instanca neke klase, moguće je koristiti to polje kao i svaku drugu varijablu. Iz gornjeg isječka koda, član _objektiKlaseC je privatna varijabla, koja je tipa List<C> . U pravilu, članovi bi uvijek trebali biti privatni, što znači da se tim članovima ne može pristupiti nigdje izvan klase u kojoj se nalaze. Svojstvo, s druge strane, Lab 1 - Osnove C# / LINQ 3 možemo promatrati kao getter i setter funkciju, samo napisanu malo drukčijom sintaksom nego što je to u C ili Java jeziku:
  sto znaci ovo za private i public i trebam li stvari u klasama postavljati na private za enkapsulaciju
 
