@@ -1,0 +1,69 @@
+@model IEnumerable<projektLana.Transport>
+@using projektLana.Data
+@{ ViewData["Title"] = "Transports"; }
+
+<div class="container mt-4">
+    <div class="mb-4 pb-2">
+        <h1 class="display-5 fw-bold" style="color: var(--travel-primary);">Transportation</h1>
+        <p class="text-muted lead">Manage your travel arrangements.</p>
+    </div>
+
+    @if (!Model.Any()) {
+        <div class="alert text-center p-4 travel-card" style="background-color: var(--travel-light);">No transports listed.</div>
+    } else {
+        var groupedTransports = Model.GroupBy(t => t.Type).OrderBy(g => g.Key);
+
+        foreach (var grupa in groupedTransports)
+        {
+            string groupIconClass = grupa.Key switch
+            {
+                TransportType.Airplane => "bi-airplane-fill",
+                TransportType.Bus => "bi-bus-front-fill",
+                TransportType.Train => "bi-train-front-fill",
+                TransportType.Car => "bi-car-front-fill",
+                TransportType.Ferry => "bi-water",
+                _ => "bi-send-fill"
+            };
+
+            <div class="mt-5 mb-3">
+                <h3 class="fw-bold" style="color: var(--travel-dark);">
+                    <i class="bi @groupIconClass me-2" style="color: var(--travel-icon-dark) !important;"></i> @grupa.Key Arrangements
+                </h3>
+                <hr class="text-muted" />
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                @foreach (var item in grupa.OrderBy(t => t.Cost)) {
+                    
+                    // Find which destination this transport belongs to
+                    var parentDestination = MockRepository.Destinations
+                        .FirstOrDefault(d => d.Transports.Any(t => t.Id == item.Id));
+                    var destinationName = parentDestination != null ? parentDestination.City : "Unknown Destination";
+
+                    <div class="col">
+                        <div class="travel-card card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-geo-alt-fill fs-3 me-2" style="color: var(--travel-icon-dark) !important;"></i>
+                                        <h5 class="card-title fw-bold text-dark mb-0">@destinationName</h5>
+                                    </div>
+                                    <i class="bi @groupIconClass fs-3" style="color: var(--travel-primary) !important; opacity: 0.2;"></i>
+                                </div>
+                                <div class="bg-light p-3 rounded-3 mb-3 border">
+                                    <p class="mb-2 text-dark small"><strong style="color: var(--travel-secondary);">Departs:</strong> @item.DepartureTime.ToString("MMM dd, HH:mm")</p>
+                                    <p class="mb-0 text-dark small"><strong style="color: var(--travel-secondary);">Arrives:</strong> @item.ArrivalTime.ToString("MMM dd, HH:mm")</p>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                                    <h5 class="m-0 fw-bold" style="color: var(--travel-primary);">$@item.Cost</h5>
+                                    @* Add this if you created a details page for Transport *@
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-travel btn-sm">Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>

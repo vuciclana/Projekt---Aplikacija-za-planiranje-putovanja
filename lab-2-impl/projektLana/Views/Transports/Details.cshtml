@@ -1,0 +1,72 @@
+@model projektLana.Transport
+@using projektLana.Data 
+@{ 
+    ViewData["Title"] = "Transport Details"; 
+
+    // Find the destination this transport belongs to
+    var parentDestination = MockRepository.Destinations.FirstOrDefault(d => d.Transports.Any(t => t.Id == Model.Id));
+    var destinationName = parentDestination != null ? parentDestination.City : "Unknown Destination";
+    
+    // Choose icon
+    string iconClass = Model.Type switch {
+        TransportType.Airplane => "bi-airplane-fill",
+        TransportType.Bus => "bi-bus-front-fill",
+        TransportType.Train => "bi-train-front-fill",
+        TransportType.Car => "bi-car-front-fill",
+        TransportType.Ferry => "bi-water",
+        _ => "bi-send-fill"
+    };
+
+    var duration = Model.ArrivalTime - Model.DepartureTime;
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-transparent p-0 m-0 fs-5">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-muted text-decoration-none">Transports</a></li>
+            <li class="breadcrumb-item active fw-bold" style="color: var(--travel-primary);" aria-current="page">@Model.Type to @destinationName</li>
+        </ol>
+    </nav>
+
+    <div class="travel-card card p-5 border-0 d-flex flex-column align-items-center text-center">
+        <div class="mb-4 d-flex align-items-center justify-content-center bg-light rounded-circle shadow-sm" style="width: 100px; height: 100px;">
+            <i class="bi @iconClass" style="font-size: 3rem; color: var(--travel-accent);"></i>
+        </div>
+        
+        <span class="badge-travel mb-3">@Model.Type</span>
+        <h1 class="display-5 fw-bold text-dark mb-1">Destination: @destinationName</h1>
+        <h4 class="text-muted mb-5">Transport Details</h4>
+        
+        <div class="row w-100 mt-2 max-w-lg mx-auto position-relative">
+            <div class="col-5 text-end">
+                <small class="text-muted text-uppercase fw-bold d-block mb-1">Departure</small>
+                <h4 class="fw-bold mb-0 text-dark">@Model.DepartureTime.ToString("HH:mm")</h4>
+                <p class="text-muted small">@Model.DepartureTime.ToString("MMM dd, yyyy")</p>
+            </div>
+            
+            <div class="col-2 d-flex flex-column align-items-center justify-content-start">
+                <i class="bi bi-clock text-muted mb-1"></i>
+                <div class="vr bg-secondary" style="height: 40px; width: 2px;"></div>
+            </div>
+            
+            <div class="col-5 text-start">
+                <small class="text-muted text-uppercase fw-bold d-block mb-1">Arrival</small>
+                <h4 class="fw-bold mb-0 text-dark">@Model.ArrivalTime.ToString("HH:mm")</h4>
+                <p class="text-muted small">@Model.ArrivalTime.ToString("MMM dd, yyyy")</p>
+            </div>
+        </div>
+
+        <div class="row w-100 mt-4 max-w-lg mx-auto bg-light p-4 rounded-4 border">
+            <div class="col-6 border-end">
+                <small class="text-muted text-uppercase fw-bold d-block mb-2">Duration</small>
+                <span class="fs-5 text-dark"><i class="bi bi-hourglass-split me-2" style="color: var(--travel-icon-dark) !important;"></i> @duration.Hours hr @duration.Minutes min</span>
+            </div>
+            <div class="col-6">
+                <small class="text-muted text-uppercase fw-bold d-block mb-2">Cost</small>
+                <span class="fs-4 fw-bold" style="color: var(--travel-primary);">@(Model.Cost > 0 ? $"${Model.Cost}" : "Free")</span>
+            </div>
+        </div>
+        
+        <a asp-action="Index" class="btn btn-outline-travel mt-5">Back to Transports</a>
+    </div>
+</div>

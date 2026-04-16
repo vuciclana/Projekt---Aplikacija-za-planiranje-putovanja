@@ -1,0 +1,32 @@
+@model projektLana.Activity
+@{ ViewData["Title"] = "Activity Details"; }
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-transparent p-0 m-0 fs-5">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-muted text-decoration-none">Activities</a></li>
+            <li class="breadcrumb-item active fw-bold" style="color: var(--travel-primary);" aria-current="page">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <div class="travel-card card p-5 border-0 d-flex flex-column align-items-center text-center">
+        <div class="mb-4">
+            <i class="bi bi-ticket-detailed-fill" style="font-size: 4rem; color: var(--travel-accent);"></i>
+        </div>
+        <span class="badge-travel mb-3">@Model.TypeOfActivity</span>
+        <h1 class="display-4 fw-bold text-dark mb-3">@Model.Name</h1>
+        
+        <div class="row w-100 mt-4 max-w-lg mx-auto bg-light p-4 rounded-4 border">
+            <div class="col-6 border-end">
+                <small class="text-muted text-uppercase fw-bold d-block mb-2">Date</small>
+                <span class="fs-5 text-dark"><i class="bi bi-calendar-event me-2" style="color: var(--travel-icon-dark) !important;"></i> @Model.Date.ToString("MMMM dd, yyyy")</span>
+            </div>
+            <div class="col-6">
+                <small class="text-muted text-uppercase fw-bold d-block mb-2">Cost</small>
+                <span class="fs-4 fw-bold" style="color: var(--travel-primary);">@(Model.Cost > 0 ? $"${Model.Cost}" : "Free")</span>
+            </div>
+        </div>
+        
+        <a asp-action="Index" class="btn btn-outline-travel mt-5">Back to Activities</a>
+    </div>
+</div>
