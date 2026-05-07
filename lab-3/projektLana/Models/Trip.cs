@@ -1,17 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace projektLana
 {  
+    [Table("Trips")]
     public class Trip
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public String? Name { get; set; }
+
+        [Required]
+        [StringLength(200)]
+        public String Name { get; set; } = null!;
+
+        [Required]
         public DateTime StartDate { get; set; }
+
+        [Required]
         public DateTime EndDate { get; set; }
-        public List<Destination> Destinations { get; set; } = new List<Destination>();
-        public User? User { get; set; }
+
+        // Foreign key
+        [ForeignKey(nameof(User))]
+        public int UserId { get; set; }
+
+        // Navigation properties
+        public virtual User User { get; set; } = null!;
+        public virtual ICollection<Destination> Destinations { get; set; } = new List<Destination>();
 
         public decimal TotalCost
         {

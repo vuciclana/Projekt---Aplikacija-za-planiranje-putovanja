@@ -1,15 +1,35 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using projektLana.Data;
+using System.Linq;
 
 namespace projektLana.Controllers
 {
     public class AccommodationsController : Controller
     {
-        public IActionResult Index() => View(MockRepository.Accommodations);
+        private readonly AppDbContext _context;
+
+        public AccommodationsController(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        public IActionResult Index()
+        {
+            var accommodations = _context.Accommodations
+                .Include(a => a.Destination)
+                .ToList();
+
+            return View(accommodations);
+        }
 
         public IActionResult Details(int id)
         {
-            var item = MockRepository.Accommodations.FirstOrDefault(a => a.Id == id);
+            var item = _context.Accommodations
+                .Include(a => a.Destination)
+                    .ThenInclude(d => d.Trip)
+                .FirstOrDefault(a => a.Id == id);
+
             if (item == null) return NotFound();
             return View(item);
         }

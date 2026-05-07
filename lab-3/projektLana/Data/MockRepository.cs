@@ -120,7 +120,9 @@ namespace projektLana.Data
                 TypeOfActivity = ActivityType.Relaxation
             });
 
-            trip1.Destinations.AddRange(new[] { rome, milan, venice });
+            trip1.Destinations.Add(rome);
+            trip1.Destinations.Add(milan);
+            trip1.Destinations.Add(venice);
 
             Reviews.Add(new Review
             {

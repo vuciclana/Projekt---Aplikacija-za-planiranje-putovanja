@@ -52,7 +52,7 @@
                 <h1 class="display-4 fw-bold mb-3" style="color: var(--travel-dark);">@Model.Name</h1>
                 <p class="lead text-muted mb-4">
                     <i class="bi bi-calendar-range me-2" style="color: var(--travel-icon-dark) !important;"></i>
-                    @Model.StartDate.ToString("MMMM dd, yyyy") — @Model.EndDate.ToString("MMMM dd, yyyy")
+                    @Model.StartDate.ToString("MMMM dd, yyyy") ï¿½ @Model.EndDate.ToString("MMMM dd, yyyy")
                 </p>
                 <div class="d-flex align-items-center gap-3">
                     <span class="badge rounded-pill px-4 py-2 shadow-sm" style="background-color: var(--travel-primary); color: white;">
@@ -106,7 +106,7 @@
                                                 <div>
                                                     <span class="badge mb-1" style="background-color: var(--travel-accent); color: white;">@ev.Type.ToUpper()</span>
                                                     <h5 class="fw-bold mb-1 text-dark">@ev.Title</h5>
-                                                    <p class="text-muted mb-0 small">@ev.ExactTime.ToString("HH:mm") — @ev.Desc</p>
+                                                    <p class="text-muted mb-0 small">@ev.ExactTime.ToString("HH:mm") ï¿½ @ev.Desc</p>
                                                 </div>
                                             </div>
                                             <div class="text-end">
