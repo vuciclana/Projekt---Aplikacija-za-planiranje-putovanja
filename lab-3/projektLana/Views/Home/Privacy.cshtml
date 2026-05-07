@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "Privacy Policy";
+}
+
+<div class="container mt-5 max-w-lg mx-auto" style="max-width: 800px;">
+    <div class="text-center mb-5">
+        <i class="bi bi-shield-lock-fill display-1" style="color: var(--travel-primary);"></i>
+        <h1 class="display-4 fw-bold mt-3 text-dark">Data <span style="color: var(--travel-accent);">Privacy</span></h1>
+        <p class="lead text-muted">How we handle your travel plans and personal data.</p>
+    </div>
+
+    <div class="travel-card card p-5 border-0">
+        <div class="mb-4">
+            <h4 class="fw-bold" style="color: var(--travel-dark);">
+                <i class="bi bi-airplane-engines me-2" style="color: var(--travel-icon-dark) !important;"></i> Safe Travels, Safe Data
+            </h4>
+            <p class="text-muted">
+                At TripPlanner, we believe your data should be as secure as your luggage. We only collect the information necessary to help you organize your trips, destinations, and accommodations.
+            </p>
+        </div>
+
+        <hr class="text-muted opacity-25 my-4" />
+
+        <div class="mb-4">
+            <h4 class="fw-bold" style="color: var(--travel-dark);">
+                <i class="bi bi-eye-slash-fill me-2" style="color: var(--travel-icon-dark) !important;"></i> Your Itineraries are Private
+            </h4>
+            <p class="text-muted">
+                We do not share your upcoming travel dates, accommodation details, or personal reviews with third-party advertisers. Your planned experiences remain entirely yours.
+            </p>
+        </div>
+
+        <div class="text-center mt-5">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-travel btn-lg px-5">
+                Return to Home
+            </a>
+        </div>
+    </div>
+</div>

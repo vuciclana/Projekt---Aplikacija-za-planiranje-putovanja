@@ -1,0 +1,87 @@
+@model projektLana.Destination
+@{ ViewData["Title"] = "Destination Details"; }
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-transparent p-0 m-0 fs-5 pb-3">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-muted text-decoration-none">Destinations</a></li>
+            <li class="breadcrumb-item active fw-bold" style="color: var(--travel-primary);" aria-current="page">@Model.City</li>
+        </ol>
+    </nav>
+
+    <div class="travel-card card overflow-hidden border-0 p-0">
+        <!-- Colored Hero Banner -->
+        <div style="background: linear-gradient(135deg, var(--travel-primary), var(--travel-secondary)); height: 200px; position: relative;">
+            <i class="bi bi-geo-alt position-absolute" style="font-size: 15rem; color: rgba(255,255,255,0.1); right: -20px; top: -50px;"></i>
+        </div>
+        
+        <!-- Floating Content -->
+        <div class="card-body px-5 pb-5" style="margin-top: -80px; position: relative; z-index: 2;">
+            <div class="d-flex justify-content-between align-items-end">
+                <div class="bg-white p-4 rounded-4 shadow d-inline-block mb-4 border">
+                    <h1 class="display-3 fw-bold text-dark mb-0 lh-1">@Model.City</h1>
+                    <h4 class="text-muted mt-2 mb-0"><i class="bi bi-globe-americas me-2" style="color: var(--travel-accent);"></i>@Model.Country</h4>
+                </div>
+                
+                <div class="bg-white p-4 rounded-4 shadow d-inline-block mb-4 border text-end">
+                    <small class="text-muted text-uppercase fw-bold d-block mb-1">Total Value</small>
+                    <h2 class="fw-bold mb-0" style="color: var(--travel-primary);">$@Model.TotalDestinationCost</h2>
+                </div>
+            </div>
+
+            <p class="lead text-muted my-4" style="max-width: 900px; line-height: 1.8;">
+                @Model.Description
+            </p>
+
+            <!-- Stats Grid -->
+            <div class="row g-4 mt-2">
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center p-4 rounded-4 border bg-white shadow-sm transition h-100">
+                        <div class="p-3 rounded-circle me-3" style="background-color: var(--travel-light);">
+                            <i class="bi bi-bicycle fs-2" style="color: var(--travel-primary);"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0 fw-bold text-dark">@Model.ActivityCount</h3>
+                            <span class="text-muted small text-uppercase fw-bold d-block mb-1">Activities</span>
+                            <small class="text-muted" style="font-size: 0.8rem;">Guided tours, sightseeing & events.</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center p-4 rounded-4 border bg-white shadow-sm transition h-100">
+                        <div class="p-3 rounded-circle me-3" style="background-color: var(--travel-light);">
+                            <i class="bi bi-house-door-fill fs-2" style="color: var(--travel-primary);"></i>
+                        </div>
+                        <div>
+                            <div class="d-flex align-items-center gap-2">
+                                <h3 class="mb-0 fw-bold text-dark">@Model.Accommodations.Count</h3>
+                                @if (Model.HasAccommodation)
+                                {
+                                    <span class="badge bg-success rounded-pill" style="height: fit-content;">Booked</span>
+                                }
+                            </div>
+                            <span class="text-muted small text-uppercase fw-bold d-block mb-1">Stays</span>
+                            <small class="text-muted" style="font-size: 0.8rem;">Hotels, apartments & resorts.</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center p-4 rounded-4 border bg-white shadow-sm transition h-100">
+                        <div class="p-3 rounded-circle me-3" style="background-color: var(--travel-light);">
+                            <i class="bi bi-truck-front-fill fs-2" style="color: var(--travel-primary);"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0 fw-bold text-dark">@Model.Transports.Count</h3>
+                            <span class="text-muted small text-uppercase fw-bold d-block mb-1">Transports</span>
+                            <small class="text-muted" style="font-size: 0.8rem;">Air, bus, and train routes.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-5 text-end border-top pt-4">
+                <a asp-action="Index" class="btn btn-outline-travel px-5">Back to Destinations</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+@model IEnumerable<projektLana.Activity>
+@{ ViewData["Title"] = "Activities"; }
+
+<div class="container mt-4">
+    <div class="mb-4 pb-2">
+        <h1 class="display-5 fw-bold" style="color: var(--travel-primary);">Travel Activities</h1>
+        <p class="text-muted lead">Find exciting things to do during your trips.</p>
+    </div>
+
+    @if (!Model.Any()) {
+        <div class="alert text-center p-4 travel-card" style="background-color: var(--travel-light);">No activities listed.</div>
+    } else {
+        @* Group the activities by their TypeOfActivity enum *@
+        var groupedActivities = Model.GroupBy(a => a.TypeOfActivity).OrderBy(g => g.Key);
+
+        foreach (var grupa in groupedActivities)
+        {
+            <div class="mt-5 mb-3">
+                @{
+                    string iconClass = grupa.Key switch
+                    {
+                        ActivityType.Sightseeing => "bi bi-camera-fill",
+                        ActivityType.Food => "bi bi-cup-hot-fill",
+                        ActivityType.Relaxation => "bi bi-bank2",
+                        ActivityType.Party => "bi bi-music-note-beamed",
+                        _=> "bi bi-collection-fill"
+                    };
+                }
+
+                <h3 class="fw-bold" style="color: var(--travel-dark);">
+                    <i class="@iconClass me-2" style="color: var(--travel-icon-dark) !important;"></i> @grupa.Key
+                </h3>
+                <hr class="text-muted" />
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                @foreach (var item in grupa.OrderBy(a => a.Cost)) {
+                    <div class="col">
+                        <div class="travel-card card">
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold mt-2 text-dark">@item.Name</h5>
+                                <p class="text-muted mt-2 mb-1"><i class="bi bi-calendar-event" style="color: var(--travel-icon-dark);"></i> @item.Date.ToString("MMM dd, yyyy")</p>
+                                
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <h4 class="mb-0" style="color: var(--travel-accent);">
+                                        @(item.Cost > 0 ? $"${item.Cost}" : "Free")
+                                    </h4>
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-travel btn-sm">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>

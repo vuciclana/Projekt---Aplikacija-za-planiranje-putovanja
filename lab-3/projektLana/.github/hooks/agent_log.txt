@@ -1,0 +1,42 @@
+--- UserPromptSubmit ---
+how can i test if hooks works
+
+--- Stop ---
+{"timestamp":"2026-05-05T13:42:43.610Z","hook_event_name":"Stop","session_id":"7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38","transcript_path":"c:\\Users\\Lana\\AppData\\Roaming\\Code\\User\\workspaceStorage\\5e237934fe8c145842e95b89067929c4\\GitHub.copilot-chat\\transcripts\\7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38.jsonl","stop_hook_active":false,"cwd":"c:\\Users\\Lana\\Desktop\\.net\\projektLana"}
+
+--- UserPromptSubmit ---
+can you make container for transport details a little wider
+
+--- PreToolUse ---
+{"timestamp":"2026-05-05T13:46:23.967Z","hook_event_name":"PreToolUse","session_id":"7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38","transcript_path":"c:\\Users\\Lana\\AppData\\Roaming\\Code\\User\\workspaceStorage\\5e237934fe8c145842e95b89067929c4\\GitHub.copilot-chat\\transcripts\\7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38.jsonl","tool_name":"read_file","tool_input":{"filePath":"c:\\Users\\Lana\\Desktop\\.net\\projektLana\\wwwroot\\css\\site.css","startLine":1,"endLine":260},"tool_use_id":"call_HuX1uZwAwdq7N305oKpgpC2W__vscode-1777984375441","cwd":"c:\\Users\\Lana\\Desktop\\.net\\projektLana"}
+
+--- PostToolUse ---
+{"timestamp":"2026-05-05T13:46:25.704Z","hook_event_name":"PostToolUse","session_id":"7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38","transcript_path":"c:\\Users\\Lana\\AppData\\Roaming\\Code\\User\\workspaceStorage\\5e237934fe8c145842e95b89067929c4\\GitHub.copilot-chat\\transcripts\\7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38.jsonl","tool_name":"read_file","tool_input":{"filePath":"c:\\Users\\Lana\\Desktop\\.net\\projektLana\\Views\\Transports\\Details.cshtml","startLine":1,"endLine":260},"tool_response":"","tool_use_id":"call_23lbFh1HMxp4IbgBHEfhGSod__vscode-1777984375440","cwd":"c:\\Users\\Lana\\Desktop\\.net\\projektLana"}
+
+--- PostToolUse ---
+{"timestamp":"2026-05-05T13:46:25.648Z","hook_event_name":"PostToolUse","session_id":"7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38","transcript_path":"c:\\Users\\Lana\\AppData\\Roaming\\Code\\User\\workspaceStorage\\5e237934fe8c145842e95b89067929c4\\GitHub.copilot-chat\\transcripts\\7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38.jsonl","tool_name":"read_file","tool_input":{"filePath":"c:\\Users\\Lana\\Desktop\\.net\\projektLana\\wwwroot\\css\\site.css","startLine":1,"endLine":260},"tool_response":"","tool_use_id":"call_HuX1uZwAwdq7N305oKpgpC2W__vscode-1777984375441","cwd":"c:\\Users\\Lana\\Desktop\\.net\\projektLana"}
+
+--- PostToolUse ---
+{"timestamp":"2026-05-05T13:46:25.798Z","hook_event_name":"PostToolUse","session_id":"7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38","transcript_path":"c:\\Users\\Lana\\AppData\\Roaming\\Code\\User\\workspaceStorage\\5e237934fe8c145842e95b89067929c4\\GitHub.copilot-chat\\transcripts\\7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38.jsonl","tool_name":"read_file","tool_input":{"filePath":"c:\\Users\\Lana\\Desktop\\.net\\projektLana\\Views\\Shared\\_Layout.cshtml","startLine":1,"endLine":220},"tool_response":"","tool_use_id":"call_QiaLsSwgJVV3QZoaF0ddeWwT__vscode-1777984375442","cwd":"c:\\Users\\Lana\\Desktop\\.net\\projektLana"}
+
+--- PreToolUse ---
+{"timestamp":"2026-05-05T13:46:43.638Z","hook_event_name":"PreToolUse","session_id":"7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38","transcript_path":"c:\\Users\\Lana\\AppData\\Roaming\\Code\\User\\workspaceStorage\\5e237934fe8c145842e95b89067929c4\\GitHub.copilot-chat\\transcripts\\7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38.jsonl","tool_name":"read_file","tool_input":{"filePath":"c:\\Users\\Lana\\Desktop\\.net\\projektLana\\Views\\Transports\\Details.cshtml","startLine":1,"endLine":40},"tool_use_id":"call_U41GjpPTNbuRicaGPA2ACTB2__vscode-1777984375443","cwd":"c:\\Users\\Lana\\Desktop\\.net\\projektLana"}
+
+--- PostToolUse ---
+{"timestamp":"2026-05-05T13:46:44.631Z","hook_event_name":"PostToolUse","session_id":"7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38","transcript_path":"c:\\Users\\Lana\\AppData\\Roaming\\Code\\User\\workspaceStorage\\5e237934fe8c145842e95b89067929c4\\GitHub.copilot-chat\\transcripts\\7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38.jsonl","tool_name":"read_file","tool_input":{"filePath":"c:\\Users\\Lana\\Desktop\\.net\\projektLana\\Views\\Transports\\Details.cshtml","startLine":1,"endLine":40},"tool_response":"","tool_use_id":"call_U41GjpPTNbuRicaGPA2ACTB2__vscode-1777984375443","cwd":"c:\\Users\\Lana\\Desktop\\.net\\projektLana"}
+
+--- PreToolUse ---
+{"timestamp":"2026-05-05T13:47:11.781Z","hook_event_name":"PreToolUse","session_id":"7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38","transcript_path":"c:\\Users\\Lana\\AppData\\Roaming\\Code\\User\\workspaceStorage\\5e237934fe8c145842e95b89067929c4\\GitHub.copilot-chat\\transcripts\\7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38.jsonl","tool_name":"read_file","tool_input":{"filePath":"c:\\Users\\Lana\\Desktop\\.net\\projektLana\\Views\\Shared\\_Layout.cshtml","startLine":20,"endLine":45},"tool_use_id":"call_rjxOQIfVBeJqeAhImns3AQdm__vscode-1777984375444","cwd":"c:\\Users\\Lana\\Desktop\\.net\\projektLana"}
+
+--- PostToolUse ---
+{"timestamp":"2026-05-05T13:47:12.848Z","hook_event_name":"PostToolUse","session_id":"7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38","transcript_path":"c:\\Users\\Lana\\AppData\\Roaming\\Code\\User\\workspaceStorage\\5e237934fe8c145842e95b89067929c4\\GitHub.copilot-chat\\transcripts\\7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38.jsonl","tool_name":"read_file","tool_input":{"filePath":"c:\\Users\\Lana\\Desktop\\.net\\projektLana\\Views\\Shared\\_Layout.cshtml","startLine":20,"endLine":45},"tool_response":"","tool_use_id":"call_rjxOQIfVBeJqeAhImns3AQdm__vscode-1777984375444","cwd":"c:\\Users\\Lana\\Desktop\\.net\\projektLana"}
+
+--- Stop ---
+{"timestamp":"2026-05-05T13:47:19.929Z","hook_event_name":"Stop","session_id":"7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38","transcript_path":"c:\\Users\\Lana\\AppData\\Roaming\\Code\\User\\workspaceStorage\\5e237934fe8c145842e95b89067929c4\\GitHub.copilot-chat\\transcripts\\7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38.jsonl","stop_hook_active":false,"cwd":"c:\\Users\\Lana\\Desktop\\.net\\projektLana"}
+
+--- UserPromptSubmit ---
+can you make container for transport details a little wider
+
+--- Stop ---
+{"timestamp":"2026-05-05T13:49:16.786Z","hook_event_name":"Stop","session_id":"7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38","transcript_path":"c:\\Users\\Lana\\AppData\\Roaming\\Code\\User\\workspaceStorage\\5e237934fe8c145842e95b89067929c4\\GitHub.copilot-chat\\transcripts\\7aa09ee5-8aee-456b-bae7-6fd0bb4d4c38.jsonl","stop_hook_active":false,"cwd":"c:\\Users\\Lana\\Desktop\\.net\\projektLana"}
+
