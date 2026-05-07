@@ -43,8 +43,6 @@ This document provides a comprehensive mapping of all available URLs in the appl
 
 ### 3. DestinationsController (`/Destinations`)
 
-### 3. DestinationsController (`/Destinations`)
-
 | HTTP Method | URL Pattern | Action | View | Parameters | Description |
 |-------------|------------|--------|------|-----------|-------------|
 | GET | `/Destinations` | `Index` | `Destinations/Index.cshtml` | - | List all destinations |
@@ -339,7 +337,7 @@ Views use **Razor tag helpers** to generate correct URLs:
 
 ---
 
-## Summary of All 7 Controllers & 26 Actions
+## Summary of All Controllers & Actions
 
 | # | Controller | Actions | Routes | Views |
 |---|-----------|---------|--------|-------|
@@ -396,22 +394,3 @@ Views use **Razor tag helpers** to generate correct URLs:
 - **View**: Reviews/Index.cshtml
 - **Filter**: Reviews with rating ≥ 4, sorted descending by rating
 - **ViewData**: CurrentFilter = "Recommended"
-
-### Example 4: Legacy Route (Fallback)
-**URL**: `/travel/Details/5`
-- **Controller**: TripsController
-- **Action**: DetailsByIdFallback(int id)
-- **Parameters**: id = 5
-- **View**: Trips/Details.cshtml (same as slug-based route)
-- **Purpose**: Maintain backwards compatibility
-<!-- Generates: /stays/Hotel/hotel-roma -->
-```
-
-### Review Filter Links
-```html
-<a asp-action="Recommended">Recommended Reviews</a>
-<!-- Generates: /Reviews/Recommended -->
-
-<a asp-action="NeedsImprovements">Reviews Needing Improvement</a>
-<!-- Generates: /Reviews/NeedsImprovements -->
-```
