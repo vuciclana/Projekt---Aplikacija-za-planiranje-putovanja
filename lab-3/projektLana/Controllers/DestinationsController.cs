@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace projektLana.Controllers
 {
+    [Route("Destinations")]
     public class DestinationsController : Controller
     {
         private readonly AppDbContext _context;
@@ -23,7 +24,24 @@ namespace projektLana.Controllers
             return View(destinations);
         }
 
-        public IActionResult Details(int id)
+        [HttpGet("{country}/{city}")]
+        public IActionResult Details(string country, string city)
+        {
+            var item = _context.Destinations
+                .Include(d => d.Trip)
+                .Include(d => d.Activities)
+                .Include(d => d.Accommodations)
+                .Include(d => d.Transports)
+                .Include(d => d.Reviews)
+                    .ThenInclude(r => r.User)
+                .FirstOrDefault(d => d.Country.ToLower() == country.ToLower() && d.City.ToLower() == city.ToLower());
+
+            if (item == null) return NotFound();
+            return View(item);
+        }
+
+        [HttpGet("Details/{id}")]
+        public IActionResult DetailsByIdFallback(int id)
         {
             var item = _context.Destinations
                 .Include(d => d.Trip)
@@ -35,7 +53,7 @@ namespace projektLana.Controllers
                 .FirstOrDefault(d => d.Id == id);
 
             if (item == null) return NotFound();
-            return View(item);
+            return View("Details", item);
         }
     }
 }

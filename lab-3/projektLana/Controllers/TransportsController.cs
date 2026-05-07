@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace projektLana.Controllers
 {
+    [Route("Transports")]
     public class TransportsController : Controller
     {
         private readonly AppDbContext _context;
@@ -23,6 +24,7 @@ namespace projektLana.Controllers
             return View(transports);
         }
 
+        [HttpGet("Details/{id}")]
         public IActionResult Details(int id)
         {
             var item = _context.Transports

@@ -1,5 +1,16 @@
 @model IEnumerable<projektLana.Destination> 
-@{ ViewData["Title"] = "Destinations"; }
+@using System.Text.RegularExpressions;
+@{ 
+    ViewData["Title"] = "Destinations";
+    
+    string GenerateSlug(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return "";
+        var slug = Regex.Replace(text.ToLower(), @"[^a-z0-9\s-]", "");
+        slug = Regex.Replace(slug, @"\s+", "-");
+        return Regex.Replace(slug, @"-+", "-").Trim('-');
+    }
+}
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4 pb-2">
@@ -37,7 +48,7 @@
                                 <p class="card-text text-muted position-relative z-1" style="font-size: 1.1rem;">@item.Description</p>
                             </div>
                             <div class="card-footer bg-transparent border-top-0 p-4 pt-0 text-end">
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-travel btn-lg">View Details</a>
+                                <a asp-action="Details" asp-route-country="@item.Country" asp-route-city="@item.City" class="btn btn-outline-travel btn-lg">View Details</a>
                             </div>
                         </div>
                     </div>

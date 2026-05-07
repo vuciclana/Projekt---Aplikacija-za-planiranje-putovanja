@@ -1,11 +1,39 @@
 @model IEnumerable<projektLana.Review>
-@{ ViewData["Title"] = "Reviews"; }
+@{ 
+    ViewData["Title"] = "Reviews";
+    string currentFilter = ViewData["CurrentFilter"]?.ToString() ?? "All";
+}
 
 <div class="container mt-4">
     <div class="mb-4 pb-2 border-bottom">
         <h1 class="display-5 fw-bold" style="color: var(--travel-primary);">Traveler Reviews</h1>
         <p class="text-muted lead">See what others are saying about their experiences.</p>
     </div>
+
+    <!-- Filter Tabs -->
+    <ul class="nav nav-tabs mb-4" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a asp-action="Index" 
+               class="nav-link @(currentFilter == "All" ? "active" : "")" 
+               role="tab">
+                <i class="bi bi-collection me-2"></i> All Reviews
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a asp-action="Recommended" 
+               class="nav-link @(currentFilter == "Recommended" ? "active" : "")" 
+               role="tab">
+                <i class="bi bi-hand-thumbs-up-fill me-2" style="color: #28a745;"></i> Recommended
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a asp-action="NeedsImprovements" 
+               class="nav-link @(currentFilter == "NeedsImprovements" ? "active" : "")" 
+               role="tab">
+                <i class="bi bi-hand-thumbs-down-fill me-2" style="color: #dc3545;"></i> Needs Improvement
+            </a>
+        </li>
+    </ul>
 
     @if (!Model.Any()) {
         <div class="alert text-center p-4 travel-card" style="background-color: var(--travel-light);">No reviews yet.</div>

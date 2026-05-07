@@ -1,14 +1,23 @@
 @model projektLana.Trip
 @using projektLana.Data
+@using System.Text.RegularExpressions;
 @{ 
-    ViewData["Title"] = "Trip Details"; 
+    ViewData["Title"] = "Trip Details";
+    
+    string GenerateSlug(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return "";
+        var slug = Regex.Replace(text.ToLower(), @"[^a-z0-9\s-]", "");
+        slug = Regex.Replace(slug, @"\s+", "-");
+        return Regex.Replace(slug, @"-+", "-").Trim('-');
+    }
 
-    var events = new List<(DateTime Date, DateTime ExactTime, string Type, string Title, string Desc, string Icon, decimal Cost, string Controller, int Id)>();
+    var events = new List<(DateTime Date, DateTime ExactTime, string Type, string Title, string Desc, string Icon, decimal Cost, string Controller, int Id, string SlugParam1, string SlugParam2, object EntityObject)>();
 
     foreach(var dest in Model.Destinations) {
         // Activities
         foreach(var act in dest.Activities) {
-            events.Add((act.Date.Date, act.Date, "Activity", act.Name, act.TypeOfActivity.ToString(), "bi-ticket-detailed-fill", act.Cost, "Activities", act.Id));
+            events.Add((act.Date.Date, act.Date, "Activity", act.Name, act.TypeOfActivity.ToString(), "bi-ticket-detailed-fill", act.Cost, "Activities", act.Id, act.TypeOfActivity.ToString(), GenerateSlug(act.Name), act));
         }
         foreach(var trans in dest.Transports) {
             string transIcon = trans.Type switch {
@@ -19,13 +28,13 @@
                 TransportType.Ferry => "bi-water",
                 _ => "bi-send-fill"
             };
-            events.Add((trans.DepartureTime.Date, trans.DepartureTime, "Transport", $"{trans.Type} Departure - {dest.City}", $"Departs at {trans.DepartureTime:HH:mm}", transIcon, trans.Cost, "Transports", trans.Id));
-            events.Add((trans.ArrivalTime.Date, trans.ArrivalTime, "Transport", $"{trans.Type} Arrival - {dest.City}", $"Arrives at {trans.ArrivalTime:HH:mm}", transIcon, 0m, "Transports", trans.Id));
+            events.Add((trans.DepartureTime.Date, trans.DepartureTime, "Transport", $"{trans.Type} Departure - {dest.City}", $"Departs at {trans.DepartureTime:HH:mm}", transIcon, trans.Cost, "Transports", trans.Id, "", "", trans));
+            events.Add((trans.ArrivalTime.Date, trans.ArrivalTime, "Transport", $"{trans.Type} Arrival - {dest.City}", $"Arrives at {trans.ArrivalTime:HH:mm}", transIcon, 0m, "Transports", trans.Id, "", "", trans));
         }
         // Accommodations (Check-in and Check-out)
         foreach(var acc in dest.Accommodations) {
-            events.Add((acc.CheckInDate.Date, acc.CheckInDate, "Stay Check-in", acc.Name, acc.Type.ToString(), "bi-door-open-fill", acc.CostPerNight, "Accommodations", acc.Id));
-            events.Add((acc.CheckOutDate.Date, acc.CheckOutDate, "Stay Check-out", acc.Name, "Departure", "bi-door-closed-fill", 0m, "Accommodations", acc.Id));
+            events.Add((acc.CheckInDate.Date, acc.CheckInDate, "Stay Check-in", acc.Name, acc.Type.ToString(), "bi-door-open-fill", acc.CostPerNight, "Accommodations", acc.Id, acc.Type.ToString(), GenerateSlug(acc.Name), acc));
+            events.Add((acc.CheckOutDate.Date, acc.CheckOutDate, "Stay Check-out", acc.Name, "Departure", "bi-door-closed-fill", 0m, "Accommodations", acc.Id, acc.Type.ToString(), GenerateSlug(acc.Name), acc));
         }
     }
 
@@ -113,7 +122,21 @@
                                                 @if(ev.Cost > 0) {
                                                     <h5 class="fw-bold mb-2" style="color: var(--travel-primary);">$@ev.Cost</h5>
                                                 }
-                                                <a asp-controller="@ev.Controller" asp-action="Details" asp-route-id="@ev.Id" class="btn btn-outline-travel btn-sm">Details</a>
+                                                @switch(ev.Controller)
+                                                {
+                                                    case "Activities":
+                                                        <a asp-controller="Activities" asp-action="Details" asp-route-activityType="@ev.SlugParam1" asp-route-activityName="@ev.SlugParam2" class="btn btn-outline-travel btn-sm">Details</a>
+                                                        break;
+                                                    case "Accommodations":
+                                                        <a asp-controller="Accommodations" asp-action="Details" asp-route-accommodationType="@ev.SlugParam1" asp-route-accommodationName="@ev.SlugParam2" class="btn btn-outline-travel btn-sm">Details</a>
+                                                        break;
+                                                    case "Transports":
+                                                        <a asp-controller="Transports" asp-action="Details" asp-route-id="@ev.Id" class="btn btn-outline-travel btn-sm">Details</a>
+                                                        break;
+                                                    default:
+                                                        <a asp-controller="@ev.Controller" asp-action="Details" asp-route-id="@ev.Id" class="btn btn-outline-travel btn-sm">Details</a>
+                                                        break;
+                                                }
                                             </div>
                                         </div>
                                     </div>
