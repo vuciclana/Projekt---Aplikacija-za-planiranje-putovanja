@@ -6,8 +6,11 @@ obj/
 .vs/
 *.user
 
-# VS Code (opcionalno)
+# VS Code
 .vscode/
+
+# Rider
+.idea/
 
 # Logs
 *.log
@@ -15,3 +18,11 @@ obj/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Local databases
+*.db
+*.mdf
+*.ldf
+
+# NuGet
+packages/
