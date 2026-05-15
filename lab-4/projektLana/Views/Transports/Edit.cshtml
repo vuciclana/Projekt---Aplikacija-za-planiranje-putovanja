@@ -1,0 +1,139 @@
+@model projektLana.TransportFormModel
+@{
+    ViewData["Title"] = "Edit Transport";
+}
+
+<div class="container mt-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-transparent p-0 m-0 fs-5">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-muted text-decoration-none">Transports</a></li>
+            <li class="breadcrumb-item active fw-bold" style="color: var(--travel-primary);" aria-current="page">Edit Transport</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="travel-card card border-0 p-0 overflow-hidden">
+                <div class="p-5" style="background: linear-gradient(135deg, var(--travel-secondary), var(--travel-primary)); color: white;">
+                    <h2 class="fw-bold mb-2"><i class="bi bi-send-fill me-3"></i>Update Transport</h2>
+                    <p class="mb-0 opacity-90">Update transport details.</p>
+                </div>
+                <div class="p-5">
+                      <form asp-action="Edit" asp-route-id="@Model.Id" method="post" id="editTransportForm"
+                          data-trip-range="true"
+                          data-trip-range-url="@Url.Action("TripRange", "Destinations")"
+                          data-trip-range-inputs="DepartureTime,ArrivalTime">
+                        @Html.AntiForgeryToken()
+                        <input asp-for="Id" type="hidden" />
+
+                        <div class="mb-5 position-relative user-autocomplete" data-autocomplete-url="@Url.Action("Destinations", "Transports")">
+                            <label asp-for="DestinationId" class="form-label fw-bold" style="color: var(--travel-dark);">Destination</label>
+                            <input
+                                type="text"
+                                class="form-control form-control-lg user-autocomplete-input"
+                                placeholder="Start typing a destination..."
+                                autocomplete="off"
+                                value="@Model.DestinationDisplayName" />
+                            <input asp-for="DestinationId" type="hidden" class="user-autocomplete-value" />
+                            <div class="list-group user-autocomplete-results"></div>
+                            <span asp-validation-for="DestinationId" class="text-danger small mt-2 d-block"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Type" class="form-label fw-bold" style="color: var(--travel-dark);">Transport Type</label>
+                            <select asp-for="Type" asp-items="Html.GetEnumSelectList<TransportType>()" class="form-select form-select-lg">
+                                <option value="">-- Select type --</option>
+                            </select>
+                            <span asp-validation-for="Type" class="text-danger small mt-2 d-block"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Cost" class="form-label fw-bold" style="color: var(--travel-dark);">Cost</label>
+                            <input asp-for="Cost" class="form-control form-control-lg" />
+                            <span asp-validation-for="Cost" class="text-danger small mt-2 d-block"></span>
+                        </div>
+
+                        @{
+                            var departureModel = new projektLana.Models.DateTimePickerModel
+                            {
+                                FieldName = nameof(Model.DepartureTime),
+                                FieldLabel = "Departure Time",
+                                FieldValue = Model.DepartureTime.HasValue ? Model.DepartureTime.Value.ToString("yyyy-MM-dd HH:mm") : ""
+                            };
+                            var arrivalModel = new projektLana.Models.DateTimePickerModel
+                            {
+                                FieldName = nameof(Model.ArrivalTime),
+                                FieldLabel = "Arrival Time",
+                                FieldValue = Model.ArrivalTime.HasValue ? Model.ArrivalTime.Value.ToString("yyyy-MM-dd HH:mm") : ""
+                            };
+                        }
+                        <partial name="_DateTimePickerPartial" model="departureModel" />
+                        <span asp-validation-for="DepartureTime" class="text-danger small mt-2 d-block"></span>
+
+                        <partial name="_DateTimePickerPartial" model="arrivalModel" />
+                        <span asp-validation-for="ArrivalTime" class="text-danger small mt-2 d-block"></span>
+
+                        <div class="d-flex gap-3 justify-content-between">
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-lg" style="background: var(--travel-primary); color: white; border: none;">
+                                <i class="bi bi-check-circle-fill me-2"></i>Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            const form = document.getElementById('editTransportForm');
+            const departureInput = document.querySelector('[name="DepartureTime"]');
+            const arrivalInput = document.querySelector('[name="ArrivalTime"]');
+            const validationSpan = document.querySelector('[data-valmsg-for="ArrivalTime"]');
+
+            if ($(form).data('validator')) {
+                $(form).data('validator').settings.ignore = '';
+            }
+
+            function validateRouteTimes() {
+                if (!departureInput.value || !arrivalInput.value) {
+                    return true;
+                }
+
+                const departure = new Date(departureInput.value.replace(' ', 'T'));
+                const arrival = new Date(arrivalInput.value.replace(' ', 'T'));
+
+                if (arrival <= departure) {
+                    arrivalInput.classList.add('is-invalid');
+                    if (validationSpan) {
+                        validationSpan.textContent = 'Arrival time must be after departure time.';
+                    }
+                    return false;
+                }
+
+                arrivalInput.classList.remove('is-invalid');
+                if (validationSpan) {
+                    validationSpan.textContent = '';
+                }
+                return true;
+            }
+
+            form.addEventListener('submit', function (e) {
+                if (!validateRouteTimes()) {
+                    e.preventDefault();
+                }
+            });
+
+            departureInput.addEventListener('blur', validateRouteTimes);
+            departureInput.addEventListener('change', validateRouteTimes);
+            arrivalInput.addEventListener('blur', validateRouteTimes);
+            arrivalInput.addEventListener('change', validateRouteTimes);
+        });
+    </script>
+}

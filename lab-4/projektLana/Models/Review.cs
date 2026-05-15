@@ -18,6 +18,8 @@ namespace projektLana
         [StringLength(1000)]
         public String? Comment { get; set; }
 
+        public bool IsDeleted { get; set; } = false;
+
         // Foreign keys
         [ForeignKey(nameof(User))]
         public int UserId { get; set; }

@@ -9,6 +9,18 @@
         </ol>
     </nav>
 
+    <div class="d-flex justify-content-end gap-2 mb-3">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-edit btn-lg d-inline-flex align-items-center">
+            <i class="bi bi-pencil me-2"></i> Edit
+        </a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-delete btn-lg d-inline-flex align-items-center">
+            <i class="bi bi-trash me-2"></i> Delete
+        </a>
+        <a asp-action="Index" class="btn btn-outline-travel btn-lg d-inline-flex align-items-center">
+            <i class="bi bi-arrow-left me-2"></i> Back
+        </a>
+    </div>
+
     <div class="travel-card card overflow-hidden border-0 p-0">
         <!-- Colored Hero Banner -->
         <div style="background: linear-gradient(135deg, var(--travel-primary), var(--travel-secondary)); height: 200px; position: relative;">
@@ -79,9 +91,6 @@
                 </div>
             </div>
             
-            <div class="mt-5 text-end border-top pt-4">
-                <a asp-action="Index" class="btn btn-outline-travel px-5">Back to Destinations</a>
-            </div>
         </div>
     </div>
 </div>

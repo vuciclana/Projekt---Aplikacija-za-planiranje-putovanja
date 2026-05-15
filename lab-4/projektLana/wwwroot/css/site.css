@@ -173,3 +173,72 @@ body {
 .travel-card i, .hero-glass i {
     color: var(--travel-icon-dark) !important;
 }
+
+.user-autocomplete-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1050;
+    max-height: 260px;
+    overflow-y: auto;
+    display: none;
+}
+
+.user-autocomplete-results.show {
+    display: block;
+}
+
+.user-autocomplete-item {
+    cursor: pointer;
+}
+
+.btn-edit,
+.btn-delete {
+    border-width: 2px;
+    font-weight: 600;
+}
+
+.btn-edit {
+    color: #ffffff !important;
+    border-color: #d39e00 !important;
+    background: #d39e00 !important;
+}
+
+.btn-edit:hover,
+.btn-edit:focus {
+    color: #d39e00 !important;
+    background: transparent !important;
+    box-shadow: 0 6px 16px rgba(211, 158, 0, 0.25);
+}
+
+.btn-delete {
+    color: #ffffff !important;
+    border-color: #dc3545 !important;
+    background: #dc3545 !important;
+}
+
+.btn-delete .bi-trash {
+    color: #ffffff !important;
+}
+
+.btn-edit .bi-pencil {
+    color: #ffffff !important;
+}
+
+.btn-delete:hover,
+.btn-delete:focus {
+    color: #dc3545 !important;
+    background: transparent !important;
+    box-shadow: 0 6px 16px rgba(220, 53, 69, 0.25);
+}
+
+.btn-delete:hover .bi-trash,
+.btn-delete:focus .bi-trash {
+    color: #dc3545 !important;
+}
+
+.btn-edit:hover .bi-pencil,
+.btn-edit:focus .bi-pencil {
+    color: #d39e00 !important;
+}

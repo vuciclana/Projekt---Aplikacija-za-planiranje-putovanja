@@ -1,8 +1,23 @@
 @model projektLana.Accommodation
-@{ ViewData["Title"] = "Booking Summary"; }
+@using System.Globalization;
+@{
+    ViewData["Title"] = "Booking Summary";
+    var culture = CultureInfo.CurrentCulture;
+}
 
 <div class="row justify-content-center mt-5">
     <div class="col-lg-10">
+        <div class="d-flex justify-content-end gap-2 mb-3">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-edit btn-lg d-inline-flex align-items-center">
+                <i class="bi bi-pencil me-2"></i> Edit
+            </a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-delete btn-lg d-inline-flex align-items-center">
+                <i class="bi bi-trash me-2"></i> Delete
+            </a>
+            <a asp-action="Index" class="btn btn-outline-travel btn-lg d-inline-flex align-items-center">
+                <i class="bi bi-arrow-left me-2"></i> Back
+            </a>
+        </div>
         <div class="travel-card card border-0 p-0 overflow-hidden d-flex flex-md-row">
             
             <div class="p-5 d-flex flex-column justify-content-center align-items-center text-white" style="background: var(--travel-primary); min-width: 250px;">
@@ -21,7 +36,7 @@
                         <!-- Check In -->
                         <div class="flex-grow-1">
                             <small class="text-muted text-uppercase fw-bold d-block mb-1"><i class="bi bi-box-arrow-in-right me-1" style="color: var(--travel-icon-dark);"></i> Check In</small>
-                            <h4 class="fw-bold text-dark mb-0">@Model.CheckInDate.ToString("dd.MM.yyyy")</h4>
+                            <h4 class="fw-bold text-dark mb-0">@Model.CheckInDate.ToString("d MMM yyyy", culture)</h4>
                         </div>
 
                         <!-- Nights connecting line & badge -->
@@ -35,7 +50,7 @@
                         <!-- Check Out -->
                         <div class="flex-grow-1">
                             <small class="text-muted text-uppercase fw-bold d-block mb-1"><i class="bi bi-box-arrow-right me-1" style="color: var(--travel-icon-dark);"></i> Check Out</small>
-                            <h4 class="fw-bold text-dark mb-0">@Model.CheckOutDate.ToString("dd.MM.yyyy")</h4>
+                            <h4 class="fw-bold text-dark mb-0">@Model.CheckOutDate.ToString("d MMM yyyy", culture)</h4>
                         </div>
                     </div>
 
@@ -51,9 +66,6 @@
                         </div>
                     </div>
 
-                    <div class="mt-5">
-                        <a asp-action="Index" class="btn btn-outline-travel px-5">Back to Stays</a>
-                    </div>
                 </div>
             </div>
         </div>

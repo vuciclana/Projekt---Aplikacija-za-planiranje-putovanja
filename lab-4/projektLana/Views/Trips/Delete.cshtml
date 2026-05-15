@@ -1,0 +1,91 @@
+@model projektLana.Trip
+@{
+    ViewData["Title"] = "Delete Trip";
+}
+
+<div class="container mt-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-transparent p-0 m-0 fs-5">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-muted text-decoration-none">Trips</a></li>
+            <li class="breadcrumb-item active fw-bold" style="color: var(--travel-primary);" aria-current="page">Delete Confirmation</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="travel-card card border-0 p-0 overflow-hidden border-danger" style="border-left: 5px solid var(--travel-accent) !important;">
+                <!-- Card Header - Warning -->
+                <div class="p-5" style="background: linear-gradient(135deg, rgba(212, 74, 100, 0.1), rgba(207, 54, 83, 0.1)); border-bottom: 2px solid var(--travel-accent);">
+                    <h2 class="fw-bold mb-2" style="color: var(--travel-accent);">
+                        <i class="bi bi-exclamation-triangle-fill me-3"></i>Delete Trip
+                    </h2>
+                    <p class="mb-0 text-muted">This action cannot be undone. Please confirm deletion.</p>
+                </div>
+
+                <!-- Trip Details -->
+                <div class="p-5 border-bottom" style="background-color: var(--travel-light);">
+                    <h4 class="fw-bold mb-4" style="color: var(--travel-dark);">Trip to be deleted:</h4>
+                    
+                    <div class="row align-items-center mb-4">
+                        <div class="col-auto">
+                            <i class="bi bi-pin-map-fill" style="font-size: 2rem; color: var(--travel-accent);"></i>
+                        </div>
+                        <div class="col">
+                            <p class="mb-0 small text-muted">TRIP NAME</p>
+                            <h5 class="fw-bold text-dark mb-0">@Model.Name</h5>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mb-4">
+                        <div class="col-auto">
+                            <i class="bi bi-calendar-range" style="font-size: 2rem; color: var(--travel-secondary);"></i>
+                        </div>
+                        <div class="col">
+                            <p class="mb-0 small text-muted">DATES</p>
+                            <h5 class="fw-bold text-dark mb-0">@Model.StartDate.ToString("dd MMMM, yyyy") - @Model.EndDate.ToString("dd MMMM, yyyy")</h5>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <i class="bi bi-person-fill" style="font-size: 2rem; color: var(--travel-primary);"></i>
+                        </div>
+                        <div class="col">
+                            <p class="mb-0 small text-muted">TRAVELER</p>
+                            <h5 class="fw-bold text-dark mb-0">@Model.User?.FirstName @Model.User?.LastName</h5>
+                        </div>
+                    </div>
+
+                    @if (Model.Destinations.Any())
+                    {
+                        <div class="alert alert-warning mt-4 mb-0">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            <strong>Warning:</strong> This trip has @Model.Destinations.Count destination(s). Deleting this trip may also delete related destinations, activities, accommodations, transports and reviews depending on database relationships.
+                        </div>
+                    }
+                </div>
+
+                <!-- Confirmation Form -->
+                <div class="p-5">
+                    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="alert alert-info mb-4">
+                            <i class="bi bi-shield-check me-2"></i>
+                            Are you sure you want to permanently delete this trip?
+                        </div>
+
+                        <div class="d-flex gap-3 justify-content-between">
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-lg" style="background: var(--travel-accent); color: white; border: none;">
+                                <i class="bi bi-trash-fill me-2"></i>Yes, Delete Permanently
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,68 +1,36 @@
 @model IEnumerable<projektLana.Activity>
-@using System.Text.RegularExpressions;
 @{ 
     ViewData["Title"] = "Activities";
-    
-    string GenerateSlug(string text)
-    {
-        if (string.IsNullOrEmpty(text)) return "";
-        var slug = Regex.Replace(text.ToLower(), @"[^a-z0-9\s-]", "");
-        slug = Regex.Replace(slug, @"\s+", "-");
-        return Regex.Replace(slug, @"-+", "-").Trim('-');
-    }
 }
 
 <div class="container mt-4">
-    <div class="mb-4 pb-2">
-        <h1 class="display-5 fw-bold" style="color: var(--travel-primary);">Travel Activities</h1>
-        <p class="text-muted lead">Find exciting things to do during your trips.</p>
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center mb-4 pb-3 border-bottom gap-3">
+        <div>
+            <h1 class="display-5 fw-bold" style="color: var(--travel-primary);">Travel Activities</h1>
+            <p class="text-muted lead">Find exciting things to do during your trips.</p>
+        </div>
+        <div class="d-flex flex-column flex-md-row gap-3 align-items-stretch">
+            <div class="input-group input-group-sm" style="min-width: 280px;">
+                <span class="input-group-text bg-white border-end-0 rounded-pill-start" style="border-color: var(--travel-primary);">
+                    <i class="bi bi-search" style="color: var(--travel-primary);"></i>
+                </span>
+                <input
+                    type="text"
+                    class="form-control border-start-0 rounded-pill-end"
+                    placeholder="Search activities..."
+                    autocomplete="off"
+                    data-ajax-search="true"
+                    data-search-url="@Url.RouteUrl("ActivitiesSearch")"
+                    data-search-target="#activityCardsContainer"
+                    style="border-color: var(--travel-primary);" />
+            </div>
+            <a asp-action="Create" class="btn btn-travel btn-sm d-inline-flex align-items-center text-nowrap" style="padding: 0.6rem 1.4rem;">
+                <i class="bi bi-plus-circle-fill me-2"></i>Create Activity
+            </a>
+        </div>
     </div>
 
-    @if (!Model.Any()) {
-        <div class="alert text-center p-4 travel-card" style="background-color: var(--travel-light);">No activities listed.</div>
-    } else {
-        @* Group the activities by their TypeOfActivity enum *@
-        var groupedActivities = Model.GroupBy(a => a.TypeOfActivity).OrderBy(g => g.Key);
-
-        foreach (var grupa in groupedActivities)
-        {
-            <div class="mt-5 mb-3">
-                @{
-                    string iconClass = grupa.Key switch
-                    {
-                        ActivityType.Sightseeing => "bi bi-camera-fill",
-                        ActivityType.Food => "bi bi-cup-hot-fill",
-                        ActivityType.Relaxation => "bi bi-bank2",
-                        ActivityType.Party => "bi bi-music-note-beamed",
-                        _=> "bi bi-collection-fill"
-                    };
-                }
-
-                <h3 class="fw-bold" style="color: var(--travel-dark);">
-                    <i class="@iconClass me-2" style="color: var(--travel-icon-dark) !important;"></i> @grupa.Key
-                </h3>
-                <hr class="text-muted" />
-            </div>
-
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                @foreach (var item in grupa.OrderBy(a => a.Cost)) {
-                    <div class="col">
-                        <div class="travel-card card">
-                            <div class="card-body">
-                                <h5 class="card-title fw-bold mt-2 text-dark">@item.Name</h5>
-                                <p class="text-muted mt-2 mb-1"><i class="bi bi-calendar-event" style="color: var(--travel-icon-dark);"></i> @item.Date.ToString("MMM dd, yyyy")</p>
-                                
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <h4 class="mb-0" style="color: var(--travel-accent);">
-                                        @(item.Cost > 0 ? $"${item.Cost}" : "Free")
-                                    </h4>
-                                    <a asp-action="Details" asp-route-activityType="@item.TypeOfActivity.ToString()" asp-route-activityName="@GenerateSlug(item.Name)" class="btn btn-outline-travel btn-sm">View Details</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-        }
-    }
+    <div id="activityCardsContainer">
+        <partial name="_ActivityCardsPartial" model="Model" />
+    </div>
 </div>

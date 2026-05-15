@@ -32,6 +32,8 @@ namespace projektLana
         [Required]
         public DateTime CheckOutDate { get; set; }
 
+        public bool IsDeleted { get; set; } = false;
+
         // Foreign key
         [ForeignKey(nameof(Destination))]
         public int DestinationId { get; set; }

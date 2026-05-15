@@ -25,6 +25,8 @@ namespace projektLana
         [Required]
         public DateTime ArrivalTime { get; set; }
 
+        public bool IsDeleted { get; set; } = false;
+
         // Foreign key
         [ForeignKey(nameof(Destination))]
         public int DestinationId { get; set; }

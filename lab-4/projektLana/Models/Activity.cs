@@ -25,6 +25,8 @@ namespace projektLana
         [Column(TypeName = "decimal(10, 2)")]
         public decimal Cost { get; set; }
 
+        public bool IsDeleted { get; set; } = false;
+
         // Foreign key
         [ForeignKey(nameof(Destination))]
         public int DestinationId { get; set; }

@@ -24,6 +24,8 @@ namespace projektLana
         [StringLength(500)]
         public String Description { get; set; } = null!;
 
+        public bool IsDeleted { get; set; } = false;
+
         // Foreign key for Trip
         [ForeignKey(nameof(Trip))]
         public int TripId { get; set; }

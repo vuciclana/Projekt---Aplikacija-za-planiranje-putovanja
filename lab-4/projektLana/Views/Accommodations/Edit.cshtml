@@ -1,0 +1,151 @@
+@model projektLana.AccommodationFormModel
+@{
+    ViewData["Title"] = "Edit Accommodation";
+}
+
+<div class="container mt-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-transparent p-0 m-0 fs-5">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-muted text-decoration-none">Accommodations</a></li>
+            <li class="breadcrumb-item active fw-bold" style="color: var(--travel-primary);" aria-current="page">Edit Stay</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="travel-card card border-0 p-0 overflow-hidden">
+                <div class="p-5" style="background: linear-gradient(135deg, var(--travel-secondary), var(--travel-primary)); color: white;">
+                    <h2 class="fw-bold mb-2"><i class="bi bi-buildings-fill me-3"></i>Update Stay</h2>
+                    <p class="mb-0 opacity-90">Update accommodation details.</p>
+                </div>
+                <div class="p-5">
+                      <form asp-action="Edit" asp-route-id="@Model.Id" method="post" id="editAccommodationForm"
+                          data-trip-range="true"
+                          data-trip-range-url="@Url.Action("TripRange", "Destinations")"
+                          data-trip-range-inputs="CheckInDate,CheckOutDate">
+                        @Html.AntiForgeryToken()
+                        <input asp-for="Id" type="hidden" />
+
+                        <div class="mb-5 position-relative user-autocomplete" data-autocomplete-url="@Url.Action("Destinations", "Accommodations")">
+                            <label asp-for="DestinationId" class="form-label fw-bold" style="color: var(--travel-dark);">Destination</label>
+                            <input
+                                type="text"
+                                class="form-control form-control-lg user-autocomplete-input"
+                                placeholder="Start typing a destination..."
+                                autocomplete="off"
+                                value="@Model.DestinationDisplayName" />
+                            <input asp-for="DestinationId" type="hidden" class="user-autocomplete-value" />
+                            <div class="list-group user-autocomplete-results"></div>
+                            <span asp-validation-for="DestinationId" class="text-danger small mt-2 d-block"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label fw-bold" style="color: var(--travel-dark);">Name</label>
+                            <input asp-for="Name" class="form-control form-control-lg" />
+                            <span asp-validation-for="Name" class="text-danger small mt-2 d-block"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Type" class="form-label fw-bold" style="color: var(--travel-dark);">Type</label>
+                            <select asp-for="Type" asp-items="Html.GetEnumSelectList<AccommodationType>()" class="form-select form-select-lg">
+                                <option value="">-- Select type --</option>
+                            </select>
+                            <span asp-validation-for="Type" class="text-danger small mt-2 d-block"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Address" class="form-label fw-bold" style="color: var(--travel-dark);">Address</label>
+                            <input asp-for="Address" class="form-control form-control-lg" />
+                            <span asp-validation-for="Address" class="text-danger small mt-2 d-block"></span>
+                        </div>
+
+                        @{
+                            var checkInModel = new projektLana.Models.DateTimePickerModel
+                            {
+                                FieldName = nameof(Model.CheckInDate),
+                                FieldLabel = "Check-in Date",
+                                FieldValue = Model.CheckInDate.HasValue ? Model.CheckInDate.Value.ToString("yyyy-MM-dd HH:mm") : ""
+                            };
+                            var checkOutModel = new projektLana.Models.DateTimePickerModel
+                            {
+                                FieldName = nameof(Model.CheckOutDate),
+                                FieldLabel = "Check-out Date",
+                                FieldValue = Model.CheckOutDate.HasValue ? Model.CheckOutDate.Value.ToString("yyyy-MM-dd HH:mm") : ""
+                            };
+                        }
+                        <partial name="_DateTimePickerPartial" model="checkInModel" />
+                        <span asp-validation-for="CheckInDate" class="text-danger small mt-2 d-block"></span>
+
+                        <partial name="_DateTimePickerPartial" model="checkOutModel" />
+                        <span asp-validation-for="CheckOutDate" class="text-danger small mt-2 d-block"></span>
+
+                        <div class="mb-4">
+                            <label asp-for="CostPerNight" class="form-label fw-bold" style="color: var(--travel-dark);">Cost per Night</label>
+                            <input asp-for="CostPerNight" class="form-control form-control-lg" />
+                            <span asp-validation-for="CostPerNight" class="text-danger small mt-2 d-block"></span>
+                        </div>
+
+                        <div class="d-flex gap-3 justify-content-between">
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-lg" style="background: var(--travel-primary); color: white; border: none;">
+                                <i class="bi bi-check-circle-fill me-2"></i>Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            const form = document.getElementById('editAccommodationForm');
+            const checkInInput = document.querySelector('[name="CheckInDate"]');
+            const checkOutInput = document.querySelector('[name="CheckOutDate"]');
+            const validationSpan = document.querySelector('[data-valmsg-for="CheckOutDate"]');
+
+            if ($(form).data('validator')) {
+                $(form).data('validator').settings.ignore = '';
+            }
+
+            function validateStayDates() {
+                if (!checkInInput.value || !checkOutInput.value) {
+                    return true;
+                }
+
+                const checkIn = new Date(checkInInput.value.replace(' ', 'T'));
+                const checkOut = new Date(checkOutInput.value.replace(' ', 'T'));
+
+                if (checkOut <= checkIn) {
+                    checkOutInput.classList.add('is-invalid');
+                    if (validationSpan) {
+                        validationSpan.textContent = 'Check-out date must be after check-in date.';
+                    }
+                    return false;
+                }
+
+                checkOutInput.classList.remove('is-invalid');
+                if (validationSpan) {
+                    validationSpan.textContent = '';
+                }
+                return true;
+            }
+
+            form.addEventListener('submit', function (e) {
+                if (!validateStayDates()) {
+                    e.preventDefault();
+                }
+            });
+
+            checkInInput.addEventListener('blur', validateStayDates);
+            checkInInput.addEventListener('change', validateStayDates);
+            checkOutInput.addEventListener('blur', validateStayDates);
+            checkOutInput.addEventListener('change', validateStayDates);
+        });
+    </script>
+}

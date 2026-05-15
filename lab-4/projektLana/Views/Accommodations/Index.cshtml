@@ -1,57 +1,36 @@
 @model IEnumerable<projektLana.Accommodation>
-@using System.Text.RegularExpressions;
 @{ 
     ViewData["Title"] = "Accommodations";
-    
-    string GenerateSlug(string text)
-    {
-        if (string.IsNullOrEmpty(text)) return "";
-        var slug = Regex.Replace(text.ToLower(), @"[^a-z0-9\s-]", "");
-        slug = Regex.Replace(slug, @"\s+", "-");
-        return Regex.Replace(slug, @"-+", "-").Trim('-');
-    }
 }
 
 <div class="container mt-4">
-    <div class="mb-4 pb-2">
-        <h1 class="display-5 fw-bold" style="color: var(--travel-primary);">Places to Stay</h1>
-        <p class="text-muted lead">Browse beautiful hotels and apartments.</p>
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center mb-4 pb-3 border-bottom gap-3">
+        <div>
+            <h1 class="display-5 fw-bold" style="color: var(--travel-primary);">Places to Stay</h1>
+            <p class="text-muted lead">Browse beautiful hotels and apartments.</p>
+        </div>
+        <div class="d-flex flex-column flex-md-row gap-3 align-items-stretch">
+            <div class="input-group input-group-sm" style="min-width: 280px;">
+                <span class="input-group-text bg-white border-end-0 rounded-pill-start" style="border-color: var(--travel-primary);">
+                    <i class="bi bi-search" style="color: var(--travel-primary);"></i>
+                </span>
+                <input
+                    type="text"
+                    class="form-control border-start-0 rounded-pill-end"
+                    placeholder="Search stays..."
+                    autocomplete="off"
+                    data-ajax-search="true"
+                    data-search-url="@Url.RouteUrl("AccommodationsSearch")"
+                    data-search-target="#accommodationCardsContainer"
+                    style="border-color: var(--travel-primary);" />
+            </div>
+            <a asp-action="Create" class="btn btn-travel btn-sm d-inline-flex align-items-center text-nowrap" style="padding: 0.6rem 1.4rem;">
+                <i class="bi bi-plus-circle-fill me-2"></i>Create Stay
+            </a>
+        </div>
     </div>
 
-    @if (!Model.Any()) {
-        <div class="alert text-center p-4 travel-card" style="background-color: var(--travel-light);">No accommodations added.</div>
-    } else {
-        var groupedAccommodations = Model.GroupBy(a => a.Type).OrderBy(g => g.Key);
-
-        foreach (var grupa in groupedAccommodations)
-        {
-            <div class="mt-5 mb-3">
-                <h3 class="fw-bold" style="color: var(--travel-dark);">
-                    <i class="bi bi-buildings-fill me-2" style="color: var(--travel-icon-dark) !important;"></i> @grupa.Key Options
-                </h3>
-                <hr class="text-muted" />
-            </div>
-
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                @foreach (var item in grupa.OrderBy(a => a.CostPerNight)) {
-                    <div class="col">
-                        <div class="travel-card card">
-                            <div class="card-body">
-                                <h5 class="card-title fw-bold mt-2 text-dark">@item.Name</h5>
-                                <p class="text-muted small"><i class="bi bi-pin-map-fill" style="color: var(--travel-icon-dark);"></i> @item.Address</p>
-                                <hr class="text-muted" />
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <div>
-                                        <small class="text-muted fw-bold d-block">Cost / Night</small>
-                                        <strong class="fs-4" style="color: var(--travel-primary);">$@item.CostPerNight</strong>
-                                    </div>
-                                    <a asp-action="Details" asp-route-accommodationType="@item.Type.ToString()" asp-route-accommodationName="@GenerateSlug(item.Name)" class="btn btn-outline-travel btn-sm">View Details</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-        }
-    }
+    <div id="accommodationCardsContainer">
+        <partial name="_AccommodationCardsPartial" model="Model" />
+    </div>
 </div>

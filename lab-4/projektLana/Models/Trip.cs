@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace projektLana
 {  
@@ -13,14 +14,14 @@ namespace projektLana
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(200)]
+        [Required(ErrorMessage = "Trip name is required.")]
+        [StringLength(200, MinimumLength = 3, ErrorMessage = "Trip name must be between 3 and 200 characters.")]
         public String Name { get; set; } = null!;
 
-        [Required]
+        [Required(ErrorMessage = "Start date is required.")]
         public DateTime StartDate { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "End date is required.")]
         public DateTime EndDate { get; set; }
 
         // Foreign key
@@ -30,6 +31,9 @@ namespace projektLana
         // Navigation properties
         public virtual User User { get; set; } = null!;
         public virtual ICollection<Destination> Destinations { get; set; } = new List<Destination>();
+
+        // Soft delete flag
+        public bool IsDeleted { get; set; } = false;
 
         public decimal TotalCost
         {

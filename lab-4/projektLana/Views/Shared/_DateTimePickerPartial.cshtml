@@ -1,0 +1,14 @@
+@model projektLana.Models.DateTimePickerModel
+
+<div class="mb-4">
+    <label for="@Model.FieldName" class="form-label fw-bold" style="color: var(--travel-dark);">
+        <i class="bi bi-calendar-event-fill me-2" style="color: var(--travel-accent);"></i>@Model.FieldLabel
+    </label>
+    <input 
+        type="text" 
+        id="@Model.FieldName" 
+        name="@Model.FieldName"
+        class="form-control form-control-lg datetimepicker" 
+        placeholder="Select date and time"
+        value="@Model.FieldValue" />
+</div>
