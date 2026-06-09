@@ -1,0 +1,146 @@
+@model projektLana.TripFormModel
+@{
+    ViewData["Title"] = "Create New Trip";
+}
+
+<div class="container mt-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-transparent p-0 m-0 fs-5">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-muted text-decoration-none">Trips</a></li>
+            <li class="breadcrumb-item active fw-bold" style="color: var(--travel-primary);" aria-current="page">Create New Trip</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="travel-card card border-0 p-0 overflow-hidden">
+                <!-- Card Header -->
+                <div class="p-5" style="background: linear-gradient(135deg, var(--travel-primary), var(--travel-secondary)); color: white;">
+                    <h2 class="fw-bold mb-2">
+                        <i class="bi bi-plus-circle-fill me-3"></i>Plan Your Next Adventure
+                    </h2>
+                    <p class="mb-0 opacity-90">Create a new trip and organize your travel destinations.</p>
+                </div>
+
+                <!-- Form Body -->
+                <div class="p-5">
+                    <form asp-action="Create" method="post" id="createTripForm">
+                        <!-- Trip Name -->
+                        @Html.AntiForgeryToken()
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label fw-bold" style="color: var(--travel-dark);">
+                                <i class="bi bi-tag-fill me-2" style="color: var(--travel-accent);"></i>Trip Name
+                            </label>
+                            <input asp-for="Name" class="form-control form-control-lg" placeholder="e.g., European Summer 2024" />
+                            <span asp-validation-for="Name" class="text-danger small mt-2 d-block"></span>
+                            <small class="text-muted d-block mt-1">Give your trip a memorable name (3-200 characters)</small>
+                        </div>
+
+                        <!-- Start Date -->
+                        @{
+                            var startDateModel = new projektLana.Models.DateTimePickerModel
+                            {
+                                FieldName = nameof(Model.StartDate),
+                                FieldLabel = "Start Date",
+                                FieldValue = Model.StartDate.HasValue ? Model.StartDate.Value.ToString("yyyy-MM-dd HH:mm") : ""
+                            };
+                        }
+                        <partial name="_DateTimePickerPartial" model="startDateModel" />
+                        <span asp-validation-for="StartDate" class="text-danger small mt-2 d-block"></span>
+
+                        <!-- End Date -->
+                        @{
+                            var endDateModel = new projektLana.Models.DateTimePickerModel
+                            {
+                                FieldName = nameof(Model.EndDate),
+                                FieldLabel = "End Date",
+                                FieldValue = Model.EndDate.HasValue ? Model.EndDate.Value.ToString("yyyy-MM-dd HH:mm") : ""
+                            };
+                        }
+                        <partial name="_DateTimePickerPartial" model="endDateModel" />
+                        <span asp-validation-for="EndDate" class="text-danger small mt-2 d-block"></span>
+
+                        <!-- User Selection -->
+                        <div class="mb-5 position-relative user-autocomplete" data-autocomplete-url="@Url.Action("Users", "Trips")">
+                            <label asp-for="UserId" class="form-label fw-bold" style="color: var(--travel-dark);">
+                                <i class="bi bi-person-circle me-2" style="color: var(--travel-accent);"></i>Traveler
+                            </label>
+                            <input
+                                type="text"
+                                class="form-control form-control-lg user-autocomplete-input"
+                                placeholder="Start typing a traveler..."
+                                autocomplete="off"
+                                value="@Model.UserDisplayName" />
+                            <input asp-for="UserId" type="hidden" class="user-autocomplete-value" />
+                            <div class="list-group user-autocomplete-results"></div>
+                            <span asp-validation-for="UserId" class="text-danger small mt-2 d-block"></span>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-3 justify-content-between">
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-lg" style="background: var(--travel-primary); color: white; border: none;">
+                                <i class="bi bi-check-circle-fill me-2"></i>Create Trip
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            const form = document.getElementById('createTripForm');
+            const startDateInput = document.querySelector('[name="StartDate"]');
+            const endDateInput = document.querySelector('[name="EndDate"]');
+            const validationSpan = document.querySelector('[data-valmsg-for="EndDate"]');
+
+            if ($(form).data('validator')) {
+                $(form).data('validator').settings.ignore = '';
+            }
+            
+            function validateDateRange() {
+                if (!startDateInput.value || !endDateInput.value) {
+                    return true;
+                }
+
+                const startDate = new Date(startDateInput.value.replace(' ', 'T'));
+                const endDate = new Date(endDateInput.value.replace(' ', 'T'));
+
+                if (endDate <= startDate) {
+                    endDateInput.classList.add('is-invalid');
+                    if (validationSpan) {
+                        validationSpan.textContent = 'End date must be after the start date.';
+                    }
+                    return false;
+                }
+
+                endDateInput.classList.remove('is-invalid');
+                if (validationSpan) {
+                    validationSpan.textContent = '';
+                }
+                return true;
+            }
+
+            // Only custom validation: EndDate > StartDate
+            form.addEventListener('submit', function (e) {
+                if (!validateDateRange()) {
+                    e.preventDefault();
+                }
+            });
+
+            startDateInput.addEventListener('blur', validateDateRange);
+            startDateInput.addEventListener('change', validateDateRange);
+            endDateInput.addEventListener('blur', validateDateRange);
+            endDateInput.addEventListener('change', validateDateRange);
+        });
+    </script>
+}
+

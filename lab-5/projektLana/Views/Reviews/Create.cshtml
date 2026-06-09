@@ -1,0 +1,95 @@
+@model projektLana.ReviewFormModel
+@{
+    ViewData["Title"] = "Create Review";
+}
+
+<div class="container mt-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-transparent p-0 m-0 fs-5">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-muted text-decoration-none">Reviews</a></li>
+            <li class="breadcrumb-item active fw-bold" style="color: var(--travel-primary);" aria-current="page">Create Review</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="travel-card card border-0 p-0 overflow-hidden">
+                <div class="p-5" style="background: linear-gradient(135deg, var(--travel-primary), var(--travel-secondary)); color: white;">
+                    <h2 class="fw-bold mb-2"><i class="bi bi-chat-left-text-fill me-3"></i>Add Review</h2>
+                    <p class="mb-0 opacity-90">Share your travel experience.</p>
+                </div>
+                <div class="p-5">
+                    <form asp-action="Create" method="post" id="createReviewForm">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-4 position-relative user-autocomplete" data-autocomplete-url="@Url.Action("Users", "Reviews")">
+                            <label asp-for="UserId" class="form-label fw-bold" style="color: var(--travel-dark);">User</label>
+                            <input
+                                type="text"
+                                class="form-control form-control-lg user-autocomplete-input"
+                                placeholder="Start typing a user..."
+                                autocomplete="off"
+                                value="@Model.UserDisplayName" />
+                            <input asp-for="UserId" type="hidden" class="user-autocomplete-value" />
+                            <div class="list-group user-autocomplete-results"></div>
+                            <span asp-validation-for="UserId" class="text-danger small mt-2 d-block"></span>
+                        </div>
+
+                        <div class="mb-5 position-relative user-autocomplete" data-autocomplete-url="@Url.Action("Destinations", "Reviews")">
+                            <label asp-for="DestinationId" class="form-label fw-bold" style="color: var(--travel-dark);">Destination</label>
+                            <input
+                                type="text"
+                                class="form-control form-control-lg user-autocomplete-input"
+                                placeholder="Start typing a destination..."
+                                autocomplete="off"
+                                value="@Model.DestinationDisplayName" />
+                            <input asp-for="DestinationId" type="hidden" class="user-autocomplete-value" />
+                            <div class="list-group user-autocomplete-results"></div>
+                            <span asp-validation-for="DestinationId" class="text-danger small mt-2 d-block"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Rating" class="form-label fw-bold" style="color: var(--travel-dark);">Rating</label>
+                            <select asp-for="Rating" class="form-select form-select-lg">
+                                <option value="">-- Select rating --</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                            <span asp-validation-for="Rating" class="text-danger small mt-2 d-block"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Comment" class="form-label fw-bold" style="color: var(--travel-dark);">Comment</label>
+                            <textarea asp-for="Comment" class="form-control form-control-lg" rows="4" placeholder="Optional comment"></textarea>
+                            <span asp-validation-for="Comment" class="text-danger small mt-2 d-block"></span>
+                        </div>
+
+                        <div class="d-flex gap-3 justify-content-between">
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-lg" style="background: var(--travel-primary); color: white; border: none;">
+                                <i class="bi bi-check-circle-fill me-2"></i>Create Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            const form = document.getElementById('createReviewForm');
+            if ($(form).data('validator')) {
+                $(form).data('validator').settings.ignore = '';
+            }
+        });
+    </script>
+}

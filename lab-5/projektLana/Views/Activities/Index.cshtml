@@ -1,0 +1,36 @@
+@model IEnumerable<projektLana.Activity>
+@{ 
+    ViewData["Title"] = "Activities";
+}
+
+<div class="container mt-4">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center mb-4 pb-3 border-bottom gap-3">
+        <div>
+            <h1 class="display-5 fw-bold" style="color: var(--travel-primary);">Travel Activities</h1>
+            <p class="text-muted lead">Find exciting things to do during your trips.</p>
+        </div>
+        <div class="d-flex flex-column flex-md-row gap-3 align-items-stretch">
+            <div class="input-group input-group-sm" style="min-width: 280px;">
+                <span class="input-group-text bg-white border-end-0 rounded-pill-start" style="border-color: var(--travel-primary);">
+                    <i class="bi bi-search" style="color: var(--travel-primary);"></i>
+                </span>
+                <input
+                    type="text"
+                    class="form-control border-start-0 rounded-pill-end"
+                    placeholder="Search activities..."
+                    autocomplete="off"
+                    data-ajax-search="true"
+                    data-search-url="@Url.RouteUrl("ActivitiesSearch")"
+                    data-search-target="#activityCardsContainer"
+                    style="border-color: var(--travel-primary);" />
+            </div>
+            <a asp-action="Create" class="btn btn-travel btn-sm d-inline-flex align-items-center text-nowrap" style="padding: 0.6rem 1.4rem;">
+                <i class="bi bi-plus-circle-fill me-2"></i>Create Activity
+            </a>
+        </div>
+    </div>
+
+    <div id="activityCardsContainer">
+        <partial name="_ActivityCardsPartial" model="Model" />
+    </div>
+</div>

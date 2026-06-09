@@ -1,0 +1,73 @@
+@model projektLana.Accommodation
+@using System.Globalization;
+@{
+    ViewData["Title"] = "Booking Summary";
+    var culture = CultureInfo.CurrentCulture;
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-lg-10">
+        <div class="d-flex justify-content-end gap-2 mb-3">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-edit btn-lg d-inline-flex align-items-center">
+                <i class="bi bi-pencil me-2"></i> Edit
+            </a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-delete btn-lg d-inline-flex align-items-center">
+                <i class="bi bi-trash me-2"></i> Delete
+            </a>
+            <a asp-action="Index" class="btn btn-outline-travel btn-lg d-inline-flex align-items-center">
+                <i class="bi bi-arrow-left me-2"></i> Back
+            </a>
+        </div>
+        <div class="travel-card card border-0 p-0 overflow-hidden d-flex flex-md-row">
+            
+            <div class="p-5 d-flex flex-column justify-content-center align-items-center text-white" style="background: var(--travel-primary); min-width: 250px;">
+                <i class="bi bi-door-open" style="font-size: 4rem; color: white !important;"></i>
+                <span class="badge bg-white text-dark rounded-pill mt-3 px-4 py-2 fs-6 shadow-sm">@Model.Type</span>
+            </div>
+
+            <div class="p-5 flex-grow-1 position-relative">
+                <i class="bi bi-house-door-fill position-absolute" style="font-size: 10rem; color: var(--travel-light); top: -20px; right: -20px; z-index: 0;"></i>
+                
+                <div class="position-relative z-1">
+                    <h2 class="fw-bold text-dark mb-1">@Model.Name</h2>
+                    <p class="text-muted"><i class="bi bi-pin-map-fill me-2" style="color: var(--travel-accent) !important;"></i>@Model.Address</p>
+                    
+                    <div class="bg-light p-4 rounded-4 border d-flex justify-content-between align-items-center text-center mt-5 mb-4 shadow-sm relative">
+                        <!-- Check In -->
+                        <div class="flex-grow-1">
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1"><i class="bi bi-box-arrow-in-right me-1" style="color: var(--travel-icon-dark);"></i> Check In</small>
+                            <h4 class="fw-bold text-dark mb-0">@Model.CheckInDate.ToString("d MMM yyyy", culture)</h4>
+                        </div>
+
+                        <!-- Nights connecting line & badge -->
+                        <div class="px-2 position-relative d-flex align-items-center w-100" style="max-width: 200px;">
+                            <div class="border-top border-2 w-100 position-absolute start-0" style="border-color: var(--travel-primary) !important; opacity: 0.3;"></div>
+                            <span class="badge rounded-pill bg-white text-dark border shadow-sm position-relative mx-auto px-3 py-2 z-2" style="font-size: 0.9rem;">
+                                <i class="bi bi-moon-stars-fill me-1" style="color: var(--travel-accent);"></i> @Model.NumberOfNights Nights
+                            </span>
+                        </div>
+
+                        <!-- Check Out -->
+                        <div class="flex-grow-1">
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1"><i class="bi bi-box-arrow-right me-1" style="color: var(--travel-icon-dark);"></i> Check Out</small>
+                            <h4 class="fw-bold text-dark mb-0">@Model.CheckOutDate.ToString("d MMM yyyy", culture)</h4>
+                        </div>
+                    </div>
+
+                    <!-- Cost Summary -->
+                    <div class="d-flex justify-content-between align-items-center pt-4 mt-3 border-top">
+                        <div>
+                            <small class="text-muted fw-bold d-block text-uppercase mb-1">Cost per Night</small>
+                            <h5 class="fw-bold text-dark mb-0">$@Model.CostPerNight</h5>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted fw-bold d-block text-uppercase mb-1">Total Cost</small>
+                            <h3 class="fw-bold mb-0" style="color: var(--travel-primary);">$@Model.TotalCost</h3>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

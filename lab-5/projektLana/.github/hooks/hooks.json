@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "powershell.exe -ExecutionPolicy Bypass -File .github\\hooks\\log-agent-event.ps1 -EventName UserPromptSubmit"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "powershell.exe -ExecutionPolicy Bypass -File .github\\hooks\\log-agent-event.ps1 -EventName PreToolUse"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "powershell.exe -ExecutionPolicy Bypass -File .github\\hooks\\log-agent-event.ps1 -EventName PostToolUse"
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "powershell.exe -ExecutionPolicy Bypass -File .github\\hooks\\log-agent-event.ps1 -EventName Stop"
+      }
+    ]
+  }
+}

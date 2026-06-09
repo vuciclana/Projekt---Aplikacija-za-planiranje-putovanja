@@ -1,0 +1,90 @@
+@model projektLana.Activity
+@using System.Globalization;
+@{
+    ViewData["Title"] = "Activity Details";
+    var culture = CultureInfo.CurrentCulture;
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-transparent p-0 m-0 fs-5 pb-2">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-muted text-decoration-none">Activities</a></li>
+            <li class="breadcrumb-item active fw-bold" style="color: var(--travel-primary);" aria-current="page">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-end gap-2 mb-3">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-edit btn-lg d-inline-flex align-items-center">
+            <i class="bi bi-pencil me-2"></i> Edit
+        </a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-delete btn-lg d-inline-flex align-items-center">
+            <i class="bi bi-trash me-2"></i> Delete
+        </a>
+        <a asp-action="Index" class="btn btn-outline-travel btn-lg d-inline-flex align-items-center">
+            <i class="bi bi-arrow-left me-2"></i> Back
+        </a>
+    </div>
+
+    <div class="travel-card card border-0 p-0 mt-3 mx-auto overflow-hidden d-flex flex-md-row shadow" style="max-width: 980px;">
+        
+        <div class="p-5 d-flex flex-column justify-content-center align-items-center text-white" style="background: linear-gradient(135deg, var(--travel-primary), var(--travel-secondary)); min-width: 250px;">
+            <div class="bg-white rounded-4 overflow-hidden shadow mb-3 border text-center" style="width: 110px;">
+                <div class="text-white py-2 fw-bold text-uppercase fs-6" style="background-color: var(--travel-accent);">
+                    @Model.Date.ToString("MMMM", culture)
+                </div>
+                <div class="bg-white py-3">
+                    <h1 class="mb-0 fw-bold text-dark display-4 lh-1">@Model.Date.ToString("dd", culture)</h1>
+                </div>
+                <div class="bg-light text-muted py-1 small fw-bold text-uppercase border-top">
+                    @Model.Date.ToString("yyyy", culture)
+                </div>
+            </div>
+            
+            <span class="badge bg-white text-dark rounded-pill px-4 py-2 mt-2 fs-6 shadow-sm">
+                @Model.TypeOfActivity
+            </span>
+        </div>
+
+        <div class="p-5 flex-grow-1 position-relative bg-white">
+            <i class="bi bi-ticket-perforated-fill position-absolute" style="font-size: 12rem; color: var(--travel-light); top: -20px; right: -20px; z-index: 0;"></i>
+            
+            <div class="position-relative z-1">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h1 class="display-6 fw-bold text-dark mb-0">@Model.Name</h1>
+                    @if (Model.IsPremium)
+                    {
+                        <span class="badge rounded-pill px-3 py-2 ms-3 text-white shadow-sm" style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);">
+                            <i class="bi bi-star-fill text-white !important me-1"></i> Premium
+                        </span>
+                    }
+                </div>
+                
+                <p class="text-muted fs-5 mb-5">
+                    <i class="bi bi-calendar-event me-2" style="color: var(--travel-icon-dark) !important;"></i>
+                    @Model.Date.ToString("dddd, d. MMMM", culture)
+                </p>
+
+                <div class="bg-light p-4 rounded-4 d-flex justify-content-between align-items-center mb-5 border">
+                    <div class="d-flex align-items-center">
+                        <div class="p-3 bg-white rounded-circle shadow-sm me-3 border">
+                            <i class="bi bi-tag-fill fs-4" style="color: var(--travel-primary);"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted fw-bold d-block text-uppercase mb-1">Ticket Price</small>
+                            @if (Model.IsFree)
+                            {
+                                <h4 class="fw-bold text-success mb-0">Free Experience</h4>
+                            }
+                            else
+                            {
+                                <h3 class="fw-bold mb-0" style="color: var(--travel-primary);">@Model.PriceLabel</h3>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

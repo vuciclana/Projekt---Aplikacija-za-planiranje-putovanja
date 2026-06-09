@@ -1,0 +1,83 @@
+@model projektLana.Review
+@{ ViewData["Title"] = "Review Details"; }
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-transparent p-0 m-0 fs-5 pb-3">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-muted text-decoration-none">Reviews</a></li>
+            <li class="breadcrumb-item active fw-bold" style="color: var(--travel-primary);" aria-current="page">Review by @Model.ReviewerName</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-end gap-2 mb-3">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-edit btn-lg d-inline-flex align-items-center">
+            <i class="bi bi-pencil me-2"></i> Edit
+        </a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-delete btn-lg d-inline-flex align-items-center">
+            <i class="bi bi-trash me-2"></i> Delete
+        </a>
+        <a asp-action="Index" class="btn btn-outline-travel btn-lg d-inline-flex align-items-center">
+            <i class="bi bi-arrow-left me-2"></i> Back
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="travel-card card border-0 p-5 mt-3 position-relative overflow-hidden text-center mx-auto" style="max-width: 800px;">
+
+                <i class="bi bi-quote position-absolute" style="font-size: 18rem; color: var(--travel-light); top: -60px; left: -30px; z-index: 0; line-height: 1;"></i>
+                
+                <div class="position-relative z-1">
+                    
+                    <div class="mb-4">
+                        <span class="fs-1" style="color: #ffc107; letter-spacing: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">@Model.Stars</span>
+                    </div>
+
+                    <h3 class="fw-bold text-dark lh-base mb-5" style="font-style: italic;">
+                        "@Model.Comment"
+                    </h3>
+
+                    <hr class="w-25 mx-auto mb-5 text-muted border-2" />
+
+                    <div class="row justify-content-center g-4 align-items-center bg-light p-4 rounded-4 border mx-2">
+                        <div class="col-md-5 d-flex align-items-center justify-content-center justify-content-md-end border-md-end pe-md-4">
+                            <div class="text-end me-3">
+                                <small class="text-muted text-uppercase fw-bold d-block mb-1">Traveler</small>
+                                <h5 class="fw-bold mb-0 text-dark">@Model.ReviewerName</h5>
+                            </div>
+                            <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border: 2px solid var(--travel-primary);">
+                                <i class="bi bi-person-fill fs-2" style="color: var(--travel-primary);"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-5 d-flex align-items-center justify-content-center justify-content-md-start ps-md-4">
+                            <div class="bg-white rounded-circle shadow-sm d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+                                <i class="bi bi-geo-alt-fill fs-2" style="color: var(--travel-accent);"></i>
+                            </div>
+                            <div class="text-start">
+                                <small class="text-muted text-uppercase fw-bold d-block mb-1">Destination</small>
+                                <h5 class="fw-bold mb-0 text-dark">@(Model.Destination?.City ?? "Unknown")</h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5">
+                        @if (Model.IsPositive)
+                        {
+                            <span class="badge rounded-pill px-4 py-3 fs-6 shadow-sm text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                                <i class="bi bi-hand-thumbs-up-fill me-2 text-white !important"></i> Highly Recommended
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge rounded-pill px-4 py-3 fs-6 shadow-sm text-white" style="background: linear-gradient(135deg, #dc3545 0%, #f45b69 100%);">
+                                <i class="bi bi-hand-thumbs-down-fill me-2 text-white !important"></i> Needs Improvement
+                            </span>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

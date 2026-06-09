@@ -1,0 +1,28 @@
+@model projektLana.Accommodation
+@{
+    ViewData["Title"] = "Delete Accommodation";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="travel-card card border-0 p-0 overflow-hidden">
+                <div class="p-4" style="background: linear-gradient(135deg, var(--travel-accent), #ff7b88); color: white;">
+                    <h2 class="fw-bold mb-0"><i class="bi bi-trash me-2"></i>Delete Stay</h2>
+                </div>
+                <div class="p-4">
+                    <p class="mb-4">Are you sure you want to delete <strong>@Model.Name</strong>?</p>
+                    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="d-flex gap-3 justify-content-between">
+                            <a asp-action="Details" asp-route-accommodationType="@Model.Type.ToString()" asp-route-accommodationName="@Model.Name" class="btn btn-outline-secondary btn-lg">Cancel</a>
+                            <button type="submit" class="btn btn-delete btn-lg d-inline-flex align-items-center">
+                                <i class="bi bi-trash me-2"></i>Delete
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
