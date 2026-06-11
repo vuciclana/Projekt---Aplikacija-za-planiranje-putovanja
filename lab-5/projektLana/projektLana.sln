@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.37027.9 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "projektLana", "projektLana.csproj", "{5185523A-3E37-4124-9EC5-E9B1318B71F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "projektLana.Tests", "..\projektLana.Tests\projektLana.Tests.csproj", "{6F649FFA-D635-4023-BD7B-5939A4FC7141}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{5185523A-3E37-4124-9EC5-E9B1318B71F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5185523A-3E37-4124-9EC5-E9B1318B71F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5185523A-3E37-4124-9EC5-E9B1318B71F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F649FFA-D635-4023-BD7B-5939A4FC7141}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F649FFA-D635-4023-BD7B-5939A4FC7141}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F649FFA-D635-4023-BD7B-5939A4FC7141}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F649FFA-D635-4023-BD7B-5939A4FC7141}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

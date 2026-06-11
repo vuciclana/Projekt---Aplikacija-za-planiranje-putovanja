@@ -15,7 +15,15 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.Migrate();
+    if (context.Database.IsRelational())
+    {
+        context.Database.Migrate();
+    }
+    else
+    {
+        context.Database.EnsureCreated();
+    }
+
     DbSeeder.Seed(context);
 }
 
@@ -41,3 +49,5 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}"); 
 
 app.Run();
+
+public partial class Program;
