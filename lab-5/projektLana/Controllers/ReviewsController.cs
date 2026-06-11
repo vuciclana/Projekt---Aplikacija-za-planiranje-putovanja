@@ -26,6 +26,20 @@ namespace projektLana.Controllers
             return $"{destination.City}, {destination.Country}";
         }
 
+        private IActionResult RedirectToReturnUrl(string? returnUrl)
+        {
+            return !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl)
+                ? LocalRedirect(returnUrl)
+                : RedirectToAction(nameof(Index));
+        }
+
+        private void SetReturnUrl(string? returnUrl)
+        {
+            ViewData["ReturnUrl"] = !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl)
+                ? returnUrl
+                : Url.Action(nameof(Index));
+        }
+
         public IActionResult Index()
         {
             var reviews = _context.Reviews
@@ -39,7 +53,7 @@ namespace projektLana.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Details(int id)
+        public IActionResult Details(int id, string? returnUrl)
         {
             var item = _context.Reviews
                 .Where(r => !r.IsDeleted)
@@ -49,6 +63,7 @@ namespace projektLana.Controllers
                 .FirstOrDefault(r => r.Id == id);
 
             if (item == null) return NotFound();
+            SetReturnUrl(returnUrl);
             return View(item);
         }
 
@@ -165,14 +180,27 @@ namespace projektLana.Controllers
         }
 
         [HttpGet("create")]
-        public IActionResult Create()
+        public IActionResult Create(int? destinationId, string? returnUrl)
         {
-            return View(new ReviewFormModel());
+            var model = new ReviewFormModel();
+            SetReturnUrl(returnUrl);
+
+            if (destinationId.HasValue)
+            {
+                var destination = _context.Destinations.FirstOrDefault(d => d.Id == destinationId.Value && !d.IsDeleted);
+                if (destination != null)
+                {
+                    model.DestinationId = destination.Id;
+                    model.DestinationDisplayName = FormatDestinationDisplay(destination);
+                }
+            }
+
+            return View(model);
         }
 
         [HttpPost("create")]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(ReviewFormModel model)
+        public IActionResult Create(ReviewFormModel model, string? returnUrl)
         {
             if (ModelState.IsValid && model.Rating.HasValue && model.UserId.HasValue && model.DestinationId.HasValue)
             {
@@ -186,7 +214,7 @@ namespace projektLana.Controllers
 
                 _context.Reviews.Add(review);
                 _context.SaveChanges();
-                return RedirectToAction(nameof(Details), new { id = review.Id });
+                return RedirectToReturnUrl(returnUrl);
             }
 
             if (model.UserId.HasValue)
@@ -207,11 +235,12 @@ namespace projektLana.Controllers
                 }
             }
 
+            SetReturnUrl(returnUrl);
             return View(model);
         }
 
         [HttpGet("edit/{id:int}")]
-        public IActionResult Edit(int id)
+        public IActionResult Edit(int id, string? returnUrl)
         {
             var review = _context.Reviews
                 .Include(r => r.User)
@@ -219,6 +248,7 @@ namespace projektLana.Controllers
                 .FirstOrDefault(r => r.Id == id && !r.IsDeleted);
             if (review == null) return NotFound();
 
+            SetReturnUrl(returnUrl);
             return View(new ReviewFormModel
             {
                 Id = review.Id,
@@ -233,7 +263,7 @@ namespace projektLana.Controllers
 
         [HttpPost("edit/{id:int}")]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(ReviewFormModel model)
+        public IActionResult Edit(ReviewFormModel model, string? returnUrl)
         {
             var review = _context.Reviews.FirstOrDefault(r => r.Id == model.Id && !r.IsDeleted);
             if (review == null) return NotFound();
@@ -246,7 +276,7 @@ namespace projektLana.Controllers
                 review.DestinationId = model.DestinationId.Value;
 
                 _context.SaveChanges();
-                return RedirectToAction(nameof(Details), new { id = review.Id });
+                return RedirectToReturnUrl(returnUrl);
             }
 
             if (model.UserId.HasValue)
@@ -267,11 +297,12 @@ namespace projektLana.Controllers
                 }
             }
 
+            SetReturnUrl(returnUrl);
             return View(model);
         }
 
         [HttpGet("delete/{id:int}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(int id, string? returnUrl)
         {
             var review = _context.Reviews
                 .Include(r => r.User)
@@ -279,13 +310,14 @@ namespace projektLana.Controllers
                 .FirstOrDefault(r => r.Id == id && !r.IsDeleted);
             if (review == null) return NotFound();
 
+            SetReturnUrl(returnUrl);
             return View(review);
         }
 
         [HttpPost("delete/{id:int}")]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id, string? returnUrl)
         {
             var review = _context.Reviews.FirstOrDefault(r => r.Id == id && !r.IsDeleted);
             if (review == null) return NotFound();
@@ -293,7 +325,7 @@ namespace projektLana.Controllers
             review.IsDeleted = true;
             _context.SaveChanges();
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToReturnUrl(returnUrl);
         }
 
         [HttpGet("users")]

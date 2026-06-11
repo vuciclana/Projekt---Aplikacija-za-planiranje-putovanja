@@ -24,6 +24,7 @@
                           data-trip-range-url="@Url.Action("TripRange", "Destinations")"
                           data-trip-range-inputs="CheckInDate,CheckOutDate">
                         @Html.AntiForgeryToken()
+                        <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
                         <input asp-for="Id" type="hidden" />
 
                         <div class="mb-5 position-relative user-autocomplete" data-autocomplete-url="@Url.Action("Destinations", "Accommodations")">
@@ -86,7 +87,7 @@
                         </div>
 
                         <div class="d-flex gap-3 justify-content-between">
-                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                            <a href="@ViewData["ReturnUrl"]" class="btn btn-outline-secondary btn-lg">
                                 <i class="bi bi-x-circle me-2"></i>Cancel
                             </a>
                             <button type="submit" class="btn btn-lg" style="background: var(--travel-primary); color: white; border: none;">
@@ -108,6 +109,7 @@
             const checkInInput = document.querySelector('[name="CheckInDate"]');
             const checkOutInput = document.querySelector('[name="CheckOutDate"]');
             const validationSpan = document.querySelector('[data-valmsg-for="CheckOutDate"]');
+            const sequenceError = 'Check-out date must be after check-in date.';
 
             if ($(form).data('validator')) {
                 $(form).data('validator').settings.ignore = '';
@@ -122,16 +124,19 @@
                 const checkOut = new Date(checkOutInput.value.replace(' ', 'T'));
 
                 if (checkOut <= checkIn) {
+                    checkOutInput.dataset.sequenceError = sequenceError;
                     checkOutInput.classList.add('is-invalid');
                     if (validationSpan) {
-                        validationSpan.textContent = 'Check-out date must be after check-in date.';
+                        validationSpan.textContent = sequenceError;
                     }
                     return false;
                 }
 
-                checkOutInput.classList.remove('is-invalid');
+                checkOutInput.dataset.sequenceError = '';
+                const activeMessage = checkOutInput.dataset.tripRangeError || '';
+                checkOutInput.classList.toggle('is-invalid', Boolean(activeMessage));
                 if (validationSpan) {
-                    validationSpan.textContent = '';
+                    validationSpan.textContent = activeMessage;
                 }
                 return true;
             }

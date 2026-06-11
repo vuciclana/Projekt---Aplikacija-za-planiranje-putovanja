@@ -23,6 +23,20 @@ namespace projektLana.Controllers
             return $"{destination.City}, {destination.Country}";
         }
 
+        private IActionResult RedirectToReturnUrl(string? returnUrl)
+        {
+            return !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl)
+                ? LocalRedirect(returnUrl)
+                : RedirectToAction(nameof(Index));
+        }
+
+        private void SetReturnUrl(string? returnUrl)
+        {
+            ViewData["ReturnUrl"] = !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl)
+                ? returnUrl
+                : Url.Action(nameof(Index));
+        }
+
         private bool TryGetTripDateRange(int destinationId, out DateTime startDate, out DateTime endDate)
         {
             var destination = _context.Destinations
@@ -119,14 +133,27 @@ namespace projektLana.Controllers
         }
 
         [HttpGet("create")]
-        public IActionResult Create()
+        public IActionResult Create(int? destinationId, string? returnUrl)
         {
-            return View(new TransportFormModel());
+            var model = new TransportFormModel();
+            SetReturnUrl(returnUrl);
+
+            if (destinationId.HasValue)
+            {
+                var destination = _context.Destinations.FirstOrDefault(d => d.Id == destinationId.Value && !d.IsDeleted);
+                if (destination != null)
+                {
+                    model.DestinationId = destination.Id;
+                    model.DestinationDisplayName = FormatDestinationDisplay(destination);
+                }
+            }
+
+            return View(model);
         }
 
         [HttpPost("create")]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(TransportFormModel model)
+        public IActionResult Create(TransportFormModel model, string? returnUrl)
         {
             if (model.DepartureTime.HasValue && model.ArrivalTime.HasValue && model.ArrivalTime <= model.DepartureTime)
             {
@@ -169,7 +196,7 @@ namespace projektLana.Controllers
 
                 _context.Transports.Add(transport);
                 _context.SaveChanges();
-                return RedirectToAction(nameof(Details), new { id = transport.Id });
+                return RedirectToReturnUrl(returnUrl);
             }
 
             if (model.DestinationId.HasValue)
@@ -181,17 +208,19 @@ namespace projektLana.Controllers
                 }
             }
 
+            SetReturnUrl(returnUrl);
             return View(model);
         }
 
         [HttpGet("edit/{id:int}")]
-        public IActionResult Edit(int id)
+        public IActionResult Edit(int id, string? returnUrl)
         {
             var transport = _context.Transports
                 .Include(t => t.Destination)
                 .FirstOrDefault(t => t.Id == id && !t.IsDeleted);
             if (transport == null) return NotFound();
 
+            SetReturnUrl(returnUrl);
             return View(new TransportFormModel
             {
                 Id = transport.Id,
@@ -206,7 +235,7 @@ namespace projektLana.Controllers
 
         [HttpPost("edit/{id:int}")]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(TransportFormModel model)
+        public IActionResult Edit(TransportFormModel model, string? returnUrl)
         {
             var transport = _context.Transports.FirstOrDefault(t => t.Id == model.Id && !t.IsDeleted);
             if (transport == null) return NotFound();
@@ -248,7 +277,7 @@ namespace projektLana.Controllers
                 transport.DestinationId = model.DestinationId.Value;
 
                 _context.SaveChanges();
-                return RedirectToAction(nameof(Details), new { id = transport.Id });
+                return RedirectToReturnUrl(returnUrl);
             }
 
             if (model.DestinationId.HasValue)
@@ -260,24 +289,26 @@ namespace projektLana.Controllers
                 }
             }
 
+            SetReturnUrl(returnUrl);
             return View(model);
         }
 
         [HttpGet("delete/{id:int}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(int id, string? returnUrl)
         {
             var transport = _context.Transports
                 .Include(t => t.Destination)
                 .FirstOrDefault(t => t.Id == id && !t.IsDeleted);
 
             if (transport == null) return NotFound();
+            SetReturnUrl(returnUrl);
             return View(transport);
         }
 
         [HttpPost("delete/{id:int}")]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id, string? returnUrl)
         {
             var transport = _context.Transports.FirstOrDefault(t => t.Id == id && !t.IsDeleted);
             if (transport == null) return NotFound();
@@ -285,11 +316,11 @@ namespace projektLana.Controllers
             transport.IsDeleted = true;
             _context.SaveChanges();
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToReturnUrl(returnUrl);
         }
 
         [HttpGet("Details/{id}")]
-        public IActionResult Details(int id)
+        public IActionResult Details(int id, string? returnUrl)
         {
             var item = _context.Transports
                 .Include(t => t.Destination)
@@ -297,6 +328,7 @@ namespace projektLana.Controllers
                 .FirstOrDefault(t => t.Id == id && !t.IsDeleted);
 
             if (item == null) return NotFound();
+            SetReturnUrl(returnUrl);
             return View(item);
         }
 

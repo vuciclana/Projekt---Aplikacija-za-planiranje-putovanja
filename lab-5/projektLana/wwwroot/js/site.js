@@ -3,6 +3,17 @@
 
 // Initialize Flatpickr for all datetime pickers
 document.addEventListener('DOMContentLoaded', function() {
+    if (window.jQuery && window.jQuery.validator) {
+        window.jQuery.validator.methods.number = function(value, element) {
+            return this.optional(element) || /^-?\d+(?:[.,]\d+)?$/.test(value.trim());
+        };
+
+        window.jQuery.validator.methods.range = function(value, element, param) {
+            const normalizedValue = Number(value.replace(',', '.'));
+            return this.optional(element) || (normalizedValue >= param[0] && normalizedValue <= param[1]);
+        };
+    }
+
     const userAutocomplete = document.querySelectorAll('.user-autocomplete');
 
     userAutocomplete.forEach(function(wrapper) {
@@ -126,15 +137,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (message) {
                 input.dataset.tripRangeError = message;
-                input.classList.add('is-invalid');
-                span.textContent = message;
             } else {
-                if (input.dataset.tripRangeError && span.textContent === input.dataset.tripRangeError) {
-                    input.classList.remove('is-invalid');
-                    span.textContent = '';
-                }
                 input.dataset.tripRangeError = '';
             }
+
+            const activeMessage = input.dataset.sequenceError || input.dataset.tripRangeError || '';
+            input.classList.toggle('is-invalid', Boolean(activeMessage));
+            span.textContent = activeMessage;
         }
 
         function validateTripRange() {

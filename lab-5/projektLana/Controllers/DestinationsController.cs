@@ -22,6 +22,20 @@ namespace projektLana.Controllers
             return trip.Name;
         }
 
+        private IActionResult RedirectToReturnUrl(string? returnUrl)
+        {
+            return !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl)
+                ? LocalRedirect(returnUrl)
+                : RedirectToAction(nameof(Index));
+        }
+
+        private void SetReturnUrl(string? returnUrl)
+        {
+            ViewData["ReturnUrl"] = !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl)
+                ? returnUrl
+                : Url.Action(nameof(Index));
+        }
+
         public IActionResult Index()
         {
             var destinations = _context.Destinations
@@ -66,14 +80,27 @@ namespace projektLana.Controllers
         }
 
         [HttpGet("create")]
-        public IActionResult Create()
+        public IActionResult Create(int? tripId, string? returnUrl)
         {
-            return View(new DestinationFormModel());
+            var model = new DestinationFormModel();
+            SetReturnUrl(returnUrl);
+
+            if (tripId.HasValue)
+            {
+                var selectedTrip = _context.Trips.FirstOrDefault(t => t.Id == tripId.Value && !t.IsDeleted);
+                if (selectedTrip != null)
+                {
+                    model.TripId = selectedTrip.Id;
+                    model.TripDisplayName = FormatTripDisplay(selectedTrip);
+                }
+            }
+
+            return View(model);
         }
 
         [HttpPost("create")]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(DestinationFormModel model)
+        public IActionResult Create(DestinationFormModel model, string? returnUrl)
         {
             if (ModelState.IsValid && model.TripId.HasValue)
             {
@@ -87,7 +114,7 @@ namespace projektLana.Controllers
 
                 _context.Destinations.Add(destination);
                 _context.SaveChanges();
-                return RedirectToAction(nameof(Details), new { country = destination.Country, city = destination.City });
+                return RedirectToReturnUrl(returnUrl);
             }
 
             if (model.TripId.HasValue)
@@ -99,17 +126,19 @@ namespace projektLana.Controllers
                 }
             }
 
+            SetReturnUrl(returnUrl);
             return View(model);
         }
 
         [HttpGet("edit/{id:int}")]
-        public IActionResult Edit(int id)
+        public IActionResult Edit(int id, string? returnUrl)
         {
             var destination = _context.Destinations
                 .Include(d => d.Trip)
                 .FirstOrDefault(d => d.Id == id && !d.IsDeleted);
             if (destination == null) return NotFound();
 
+            SetReturnUrl(returnUrl);
             return View(new DestinationFormModel
             {
                 Id = destination.Id,
@@ -123,7 +152,7 @@ namespace projektLana.Controllers
 
         [HttpPost("edit/{id:int}")]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(DestinationFormModel model)
+        public IActionResult Edit(DestinationFormModel model, string? returnUrl)
         {
             var destination = _context.Destinations.FirstOrDefault(d => d.Id == model.Id && !d.IsDeleted);
             if (destination == null) return NotFound();
@@ -136,7 +165,7 @@ namespace projektLana.Controllers
                 destination.TripId = model.TripId.Value;
 
                 _context.SaveChanges();
-                return RedirectToAction(nameof(Details), new { country = destination.Country, city = destination.City });
+                return RedirectToReturnUrl(returnUrl);
             }
 
             if (model.TripId.HasValue)
@@ -148,24 +177,26 @@ namespace projektLana.Controllers
                 }
             }
 
+            SetReturnUrl(returnUrl);
             return View(model);
         }
 
         [HttpGet("delete/{id:int}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(int id, string? returnUrl)
         {
             var destination = _context.Destinations
                 .Include(d => d.Trip)
                 .FirstOrDefault(d => d.Id == id && !d.IsDeleted);
 
             if (destination == null) return NotFound();
+            SetReturnUrl(returnUrl);
             return View(destination);
         }
 
         [HttpPost("delete/{id:int}")]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id, string? returnUrl)
         {
             var destination = _context.Destinations.FirstOrDefault(d => d.Id == id && !d.IsDeleted);
             if (destination == null) return NotFound();
@@ -173,11 +204,11 @@ namespace projektLana.Controllers
             destination.IsDeleted = true;
             _context.SaveChanges();
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToReturnUrl(returnUrl);
         }
 
         [HttpGet("{country}/{city}")]
-        public IActionResult Details(string country, string city)
+        public IActionResult Details(string country, string city, string? returnUrl)
         {
             var item = _context.Destinations
                 .Include(d => d.Trip)
@@ -191,6 +222,7 @@ namespace projektLana.Controllers
                                      d.City.ToLower() == city.ToLower());
 
             if (item == null) return NotFound();
+            SetReturnUrl(returnUrl);
             return View(item);
         }
 

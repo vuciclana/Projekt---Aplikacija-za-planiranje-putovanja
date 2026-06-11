@@ -24,6 +24,7 @@
                           data-trip-range-url="@Url.Action("TripRange", "Destinations")"
                           data-trip-range-inputs="Date">
                         @Html.AntiForgeryToken()
+                        <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
 
                         <div class="mb-5 position-relative user-autocomplete" data-autocomplete-url="@Url.Action("Destinations", "Activities")">
                             <label asp-for="DestinationId" class="form-label fw-bold" style="color: var(--travel-dark);">Destination</label>
@@ -70,7 +71,7 @@
                         </div>
 
                         <div class="d-flex gap-3 justify-content-between">
-                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                            <a href="@ViewData["ReturnUrl"]" class="btn btn-outline-secondary btn-lg">
                                 <i class="bi bi-x-circle me-2"></i>Cancel
                             </a>
                             <button type="submit" class="btn btn-lg" style="background: var(--travel-primary); color: white; border: none;">

@@ -14,8 +14,9 @@
                     <p class="mb-4">Are you sure you want to delete <strong>@Model.Name</strong>?</p>
                     <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
                         @Html.AntiForgeryToken()
+                        <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
                         <div class="d-flex gap-3 justify-content-between">
-                            <a asp-action="Details" asp-route-activityType="@Model.TypeOfActivity.ToString()" asp-route-activityName="@Model.Name" class="btn btn-outline-secondary btn-lg">Cancel</a>
+                            <a href="@ViewData["ReturnUrl"]" class="btn btn-outline-secondary btn-lg">Cancel</a>
                             <button type="submit" class="btn btn-delete btn-lg d-inline-flex align-items-center">
                                 <i class="bi bi-trash me-2"></i>Delete
                             </button>

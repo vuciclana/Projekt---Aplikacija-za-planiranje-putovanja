@@ -24,6 +24,20 @@ namespace projektLana.Controllers
             return $"{destination.City}, {destination.Country}";
         }
 
+        private IActionResult RedirectToReturnUrl(string? returnUrl)
+        {
+            return !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl)
+                ? LocalRedirect(returnUrl)
+                : RedirectToAction(nameof(Index));
+        }
+
+        private void SetReturnUrl(string? returnUrl)
+        {
+            ViewData["ReturnUrl"] = !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl)
+                ? returnUrl
+                : Url.Action(nameof(Index));
+        }
+
         private string GenerateSlug(string text)
         {
             if (string.IsNullOrEmpty(text)) return "";
@@ -129,14 +143,27 @@ namespace projektLana.Controllers
         }
 
         [HttpGet("create")]
-        public IActionResult Create()
+        public IActionResult Create(int? destinationId, string? returnUrl)
         {
-            return View(new AccommodationFormModel());
+            var model = new AccommodationFormModel();
+            SetReturnUrl(returnUrl);
+
+            if (destinationId.HasValue)
+            {
+                var destination = _context.Destinations.FirstOrDefault(d => d.Id == destinationId.Value && !d.IsDeleted);
+                if (destination != null)
+                {
+                    model.DestinationId = destination.Id;
+                    model.DestinationDisplayName = FormatDestinationDisplay(destination);
+                }
+            }
+
+            return View(model);
         }
 
         [HttpPost("create")]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(AccommodationFormModel model)
+        public IActionResult Create(AccommodationFormModel model, string? returnUrl)
         {
             if (model.CheckInDate.HasValue && model.CheckOutDate.HasValue && model.CheckOutDate <= model.CheckInDate)
             {
@@ -181,7 +208,7 @@ namespace projektLana.Controllers
 
                 _context.Accommodations.Add(accommodation);
                 _context.SaveChanges();
-                return RedirectToAction(nameof(Details), new { accommodationType = accommodation.Type.ToString(), accommodationName = GenerateSlug(accommodation.Name) });
+                return RedirectToReturnUrl(returnUrl);
             }
 
             if (model.DestinationId.HasValue)
@@ -193,17 +220,19 @@ namespace projektLana.Controllers
                 }
             }
 
+            SetReturnUrl(returnUrl);
             return View(model);
         }
 
         [HttpGet("edit/{id:int}")]
-        public IActionResult Edit(int id)
+        public IActionResult Edit(int id, string? returnUrl)
         {
             var accommodation = _context.Accommodations
                 .Include(a => a.Destination)
                 .FirstOrDefault(a => a.Id == id && !a.IsDeleted);
             if (accommodation == null) return NotFound();
 
+            SetReturnUrl(returnUrl);
             return View(new AccommodationFormModel
             {
                 Id = accommodation.Id,
@@ -220,7 +249,7 @@ namespace projektLana.Controllers
 
         [HttpPost("edit/{id:int}")]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(AccommodationFormModel model)
+        public IActionResult Edit(AccommodationFormModel model, string? returnUrl)
         {
             var accommodation = _context.Accommodations.FirstOrDefault(a => a.Id == model.Id && !a.IsDeleted);
             if (accommodation == null) return NotFound();
@@ -264,7 +293,7 @@ namespace projektLana.Controllers
                 accommodation.DestinationId = model.DestinationId.Value;
 
                 _context.SaveChanges();
-                return RedirectToAction(nameof(Details), new { accommodationType = accommodation.Type.ToString(), accommodationName = GenerateSlug(accommodation.Name) });
+                return RedirectToReturnUrl(returnUrl);
             }
 
             if (model.DestinationId.HasValue)
@@ -276,24 +305,26 @@ namespace projektLana.Controllers
                 }
             }
 
+            SetReturnUrl(returnUrl);
             return View(model);
         }
 
         [HttpGet("delete/{id:int}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(int id, string? returnUrl)
         {
             var accommodation = _context.Accommodations
                 .Include(a => a.Destination)
                 .FirstOrDefault(a => a.Id == id && !a.IsDeleted);
 
             if (accommodation == null) return NotFound();
+            SetReturnUrl(returnUrl);
             return View(accommodation);
         }
 
         [HttpPost("delete/{id:int}")]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id, string? returnUrl)
         {
             var accommodation = _context.Accommodations.FirstOrDefault(a => a.Id == id && !a.IsDeleted);
             if (accommodation == null) return NotFound();
@@ -301,11 +332,11 @@ namespace projektLana.Controllers
             accommodation.IsDeleted = true;
             _context.SaveChanges();
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToReturnUrl(returnUrl);
         }
 
         [HttpGet("{accommodationType}/{accommodationName}")]
-        public IActionResult Details(string accommodationType, string accommodationName)
+        public IActionResult Details(string accommodationType, string accommodationName, string? returnUrl)
         {
             var item = _context.Accommodations
                 .Include(a => a.Destination)
@@ -316,6 +347,7 @@ namespace projektLana.Controllers
                                       GenerateSlug(a.Name) == accommodationName.ToLower());
 
             if (item == null) return NotFound();
+            SetReturnUrl(returnUrl);
             return View(item);
         }
 

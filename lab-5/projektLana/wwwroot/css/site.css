@@ -242,3 +242,69 @@ body {
 .btn-edit:focus .bi-pencil {
     color: #d39e00 !important;
 }
+
+.itinerary-item-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 9.5rem;
+}
+
+.itinerary-item-card > .d-flex {
+  flex: 1;
+}
+
+.itinerary-item-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.55rem;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 0.8rem;
+  border-top: 1px solid #e8edf2;
+}
+
+.itinerary-item-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.65rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+}
+
+.itinerary-item-actions .btn:hover,
+.itinerary-destination-view:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0.3rem 0.7rem rgba(24, 39, 75, 0.12);
+}
+
+.itinerary-view-btn {
+  color: #0f8f9d;
+  border-color: #0f8f9d;
+  background-color: #fff;
+}
+
+.itinerary-view-btn .bi,
+.itinerary-destination-view .bi {
+  color: #0f8f9d !important;
+}
+
+.itinerary-view-btn:hover,
+.itinerary-view-btn:focus {
+  color: #fff;
+  border-color: #0f8f9d;
+  background-color: #0f8f9d;
+}
+
+.itinerary-view-btn:hover .bi,
+.itinerary-view-btn:focus .bi,
+.itinerary-destination-view:hover .bi,
+.itinerary-destination-view:focus .bi {
+  color: #fff !important;
+}
+
+.itinerary-destination-view {
+  white-space: nowrap;
+  border-radius: 0.7rem;
+}
