@@ -154,6 +154,8 @@
                         var destinationAccommodations = destination.Accommodations.Where(accommodation => !accommodation.IsDeleted).OrderBy(accommodation => accommodation.CheckInDate).ToList();
                         var destinationTransports = destination.Transports.Where(transport => !transport.IsDeleted).OrderBy(transport => transport.DepartureTime).ToList();
                         var destinationReviews = Db.Reviews.Where(review => !review.IsDeleted && review.DestinationId == destination.Id).OrderByDescending(review => review.Id).ToList();
+                        var destinationPhotos = destination.Photos.OrderByDescending(photo => photo.UploadedAt).ToList();
+                        var destinationHeroPhoto = destinationPhotos.FirstOrDefault();
                         var dateLabel = GetDateLabel(destination);
 
                         <div class="card border-0 shadow-sm overflow-hidden">
@@ -182,6 +184,12 @@
                             </div>
 
                             <div class="card-body p-4 p-lg-5 bg-light-subtle">
+                                @if (destinationHeroPhoto != null)
+                                {
+                                    <div class="destination-itinerary-hero mb-4">
+                                        <img src="@destinationHeroPhoto.FilePath" alt="@destinationHeroPhoto.OriginalFileName" loading="lazy" />
+                                    </div>
+                                }
                                 <div class="row g-4 row-cols-1 row-cols-lg-2 row-cols-xxl-4">
                                     <div class="col">
                                         <div class="h-100 border rounded-4 p-4 bg-white">

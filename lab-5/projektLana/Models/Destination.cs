@@ -36,6 +36,7 @@ namespace projektLana
         public virtual ICollection<Accommodation> Accommodations { get; set; } = new List<Accommodation>();
         public virtual ICollection<Transport> Transports { get; set; } = new List<Transport>();
         public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+        public virtual ICollection<DestinationPhoto> Photos { get; set; } = new List<DestinationPhoto>();
         public decimal TotalDestinationCost => 
             Activities.Sum(a => a.Cost) + 
             Transports.Sum(t => t.Cost) + 

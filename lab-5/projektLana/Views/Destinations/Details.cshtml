@@ -1,5 +1,12 @@
 @model projektLana.Destination
-@{ ViewData["Title"] = "Destination Details"; }
+@{
+    ViewData["Title"] = "Destination Details";
+    var galleryPhotos = Model.Photos
+        .OrderByDescending(photo => photo.UploadedAt)
+        .ToList();
+    var primaryPhoto = galleryPhotos.FirstOrDefault();
+    var secondaryPhotos = galleryPhotos.Skip(1).Take(4).ToList();
+}
 
 <div class="container mt-4">
     <nav aria-label="breadcrumb" class="mb-4">
@@ -22,75 +29,141 @@
     </div>
 
     <div class="travel-card card overflow-hidden border-0 p-0">
-        <!-- Colored Hero Banner -->
-        <div style="background: linear-gradient(135deg, var(--travel-primary), var(--travel-secondary)); height: 200px; position: relative;">
-            <i class="bi bi-geo-alt position-absolute" style="font-size: 15rem; color: rgba(255,255,255,0.1); right: -20px; top: -50px;"></i>
-        </div>
-        
-        <!-- Floating Content -->
-        <div class="card-body px-5 pb-5" style="margin-top: -80px; position: relative; z-index: 2;">
-            <div class="d-flex justify-content-between align-items-end">
-                <div class="bg-white p-4 rounded-4 shadow d-inline-block mb-4 border">
-                    <h1 class="display-3 fw-bold text-dark mb-0 lh-1">@Model.City</h1>
-                    <h4 class="text-muted mt-2 mb-0"><i class="bi bi-globe-americas me-2" style="color: var(--travel-accent);"></i>@Model.Country</h4>
-                </div>
-                
-                <div class="bg-white p-4 rounded-4 shadow d-inline-block mb-4 border text-end">
-                    <small class="text-muted text-uppercase fw-bold d-block mb-1">Total Value</small>
-                    <h2 class="fw-bold mb-0" style="color: var(--travel-primary);">$@Model.TotalDestinationCost</h2>
-                </div>
-            </div>
-
-            <p class="lead text-muted my-4" style="max-width: 900px; line-height: 1.8;">
-                @Model.Description
-            </p>
-
-            <!-- Stats Grid -->
-            <div class="row g-4 mt-2">
-                <div class="col-md-4">
-                    <div class="d-flex align-items-center p-4 rounded-4 border bg-white shadow-sm transition h-100">
-                        <div class="p-3 rounded-circle me-3" style="background-color: var(--travel-light);">
-                            <i class="bi bi-bicycle fs-2" style="color: var(--travel-primary);"></i>
-                        </div>
-                        <div>
-                            <h3 class="mb-0 fw-bold text-dark">@Model.ActivityCount</h3>
-                            <span class="text-muted small text-uppercase fw-bold d-block mb-1">Activities</span>
-                            <small class="text-muted" style="font-size: 0.8rem;">Guided tours, sightseeing & events.</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="d-flex align-items-center p-4 rounded-4 border bg-white shadow-sm transition h-100">
-                        <div class="p-3 rounded-circle me-3" style="background-color: var(--travel-light);">
-                            <i class="bi bi-house-door-fill fs-2" style="color: var(--travel-primary);"></i>
-                        </div>
-                        <div>
-                            <div class="d-flex align-items-center gap-2">
-                                <h3 class="mb-0 fw-bold text-dark">@Model.Accommodations.Count</h3>
-                                @if (Model.HasAccommodation)
-                                {
-                                    <span class="badge bg-success rounded-pill" style="height: fit-content;">Booked</span>
-                                }
+        <div class="card-body p-4 p-lg-5">
+            <div class="row g-4 g-xl-5 align-items-start">
+                <div class="col-xl-6">
+                    <div class="d-flex flex-column gap-4">
+                        <div class="destination-detail-info-panel">
+                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-start gap-3 mb-4">
+                                <div>
+                                    <h1 class="display-4 fw-bold text-dark mb-2 lh-1">@Model.City</h1>
+                                    <h4 class="text-muted mb-0"><i class="bi bi-globe-americas me-2" style="color: var(--travel-accent);"></i>@Model.Country</h4>
+                                </div>
+                                <div class="destination-detail-value text-sm-end">
+                                    <small class="text-muted text-uppercase fw-bold d-block mb-1">Total Value</small>
+                                    <h2 class="fw-bold mb-0" style="color: var(--travel-primary);">$@Model.TotalDestinationCost</h2>
+                                </div>
                             </div>
-                            <span class="text-muted small text-uppercase fw-bold d-block mb-1">Stays</span>
-                            <small class="text-muted" style="font-size: 0.8rem;">Hotels, apartments & resorts.</small>
+
+                            <p class="lead text-muted mb-0 destination-detail-description">
+                                @Model.Description
+                            </p>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center p-4 rounded-4 border bg-white shadow-sm transition h-100">
+                                    <div class="p-3 rounded-circle me-3" style="background-color: var(--travel-light);">
+                                        <i class="bi bi-bicycle fs-2" style="color: var(--travel-primary);"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="mb-0 fw-bold text-dark">@Model.ActivityCount</h3>
+                                        <span class="text-muted small text-uppercase fw-bold d-block mb-1">Activities</span>
+                                        <small class="text-muted" style="font-size: 0.8rem;">Guided tours, sightseeing & events.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center p-4 rounded-4 border bg-white shadow-sm transition h-100">
+                                    <div class="p-3 rounded-circle me-3" style="background-color: var(--travel-light);">
+                                        <i class="bi bi-house-door-fill fs-2" style="color: var(--travel-primary);"></i>
+                                    </div>
+                                    <div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <h3 class="mb-0 fw-bold text-dark">@Model.Accommodations.Count</h3>
+                                            @if (Model.HasAccommodation)
+                                            {
+                                                <span class="badge bg-success rounded-pill" style="height: fit-content;">Booked</span>
+                                            }
+                                        </div>
+                                        <span class="text-muted small text-uppercase fw-bold d-block mb-1">Stays</span>
+                                        <small class="text-muted" style="font-size: 0.8rem;">Hotels, apartments & resorts.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center p-4 rounded-4 border bg-white shadow-sm transition h-100">
+                                    <div class="p-3 rounded-circle me-3" style="background-color: var(--travel-light);">
+                                        <i class="bi bi-truck-front-fill fs-2" style="color: var(--travel-primary);"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="mb-0 fw-bold text-dark">@Model.Transports.Count</h3>
+                                        <span class="text-muted small text-uppercase fw-bold d-block mb-1">Transports</span>
+                                        <small class="text-muted" style="font-size: 0.8rem;">Air, bus, and train routes.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center p-4 rounded-4 border bg-white shadow-sm transition h-100">
+                                    <div class="p-3 rounded-circle me-3" style="background-color: var(--travel-light);">
+                                        <i class="bi bi-chat-left-text-fill fs-2" style="color: var(--travel-primary);"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="mb-0 fw-bold text-dark">@Model.Reviews.Count</h3>
+                                        <span class="text-muted small text-uppercase fw-bold d-block mb-1">Reviews</span>
+                                        <small class="text-muted" style="font-size: 0.8rem;">Traveler ratings and notes.</small>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="d-flex align-items-center p-4 rounded-4 border bg-white shadow-sm transition h-100">
-                        <div class="p-3 rounded-circle me-3" style="background-color: var(--travel-light);">
-                            <i class="bi bi-truck-front-fill fs-2" style="color: var(--travel-primary);"></i>
-                        </div>
-                        <div>
-                            <h3 class="mb-0 fw-bold text-dark">@Model.Transports.Count</h3>
-                            <span class="text-muted small text-uppercase fw-bold d-block mb-1">Transports</span>
-                            <small class="text-muted" style="font-size: 0.8rem;">Air, bus, and train routes.</small>
-                        </div>
-                    </div>
+
+                <div class="col-xl-6">
+                    @if (primaryPhoto != null)
+                    {
+                        <section class="destination-detail-gallery-section">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                                <div>
+                                    <h3 class="h4 fw-bold mb-1 text-dark">Travel photos</h3>
+                                    <p class="text-muted mb-0">Moments captured for this destination.</p>
+                                </div>
+                                <span class="destination-gallery-count">
+                                    <i class="bi bi-images me-2"></i>@galleryPhotos.Count photo@(galleryPhotos.Count == 1 ? string.Empty : "s")
+                                </span>
+                            </div>
+
+                            <a href="@primaryPhoto.FilePath" class="destination-detail-gallery-feature" target="_blank" rel="noopener noreferrer">
+                                <img src="@primaryPhoto.FilePath" alt="@primaryPhoto.OriginalFileName" loading="lazy" />
+                            </a>
+
+                            @if (secondaryPhotos.Any())
+                            {
+                                <div class="destination-detail-gallery-thumbs mt-3">
+                                    @foreach (var photo in secondaryPhotos)
+                                    {
+                                        <a href="@photo.FilePath" class="destination-detail-gallery-thumb" target="_blank" rel="noopener noreferrer">
+                                            <img src="@photo.FilePath" alt="@photo.OriginalFileName" loading="lazy" />
+                                        </a>
+                                    }
+                                </div>
+                            }
+                        </section>
+                    }
+                    else
+                    {
+                        <section class="destination-detail-gallery-section destination-detail-gallery-empty">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                                <div>
+                                    <h3 class="h4 fw-bold mb-1 text-dark">Travel photos</h3>
+                                    <p class="text-muted mb-0">No pictures were uploaded yet.</p>
+                                </div>
+                                <span class="destination-gallery-count">
+                                    <i class="bi bi-images me-2"></i>0 photos
+                                </span>
+                            </div>
+
+                            <div class="destination-detail-gallery-feature destination-detail-gallery-placeholder">
+                                <div class="destination-detail-gallery-placeholder-inner">
+                                    <i class="bi bi-image fs-1 mb-2"></i>
+                                    <div class="fw-semibold">No pictures uploaded yet</div>
+                                    <small class="text-muted">Upload travel photos to show them here.</small>
+                                </div>
+                            </div>
+                        </section>
+                    }
                 </div>
             </div>
-            
         </div>
     </div>
 </div>

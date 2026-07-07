@@ -18,14 +18,29 @@
 
         <div class="row row-cols-1 row-cols-md-3 g-4">
             @foreach (var item in grupa) {
+                var previewPhoto = item.Photos
+                    .OrderByDescending(photo => photo.UploadedAt)
+                    .FirstOrDefault();
                 <div class="col">
                     <div class="travel-card card h-100 position-relative border-0 shadow-sm transition">
+                        @if (previewPhoto != null)
+                        {
+                            <div class="destination-card-photo-wrapper">
+                                <img src="@previewPhoto.FilePath" alt="@item.City photo" class="destination-card-photo" loading="lazy" />
+                            </div>
+                        }
                         <div class="card-body p-4">
                             <i class="bi bi-geo-alt-fill position-absolute" style="top: 20px; right: 20px; font-size: 2.5rem; color: #cceeea !important;"></i>
 
                             <h4 class="card-title fw-bold mb-3 text-dark position-relative z-1" style="max-width: 80%; font-size: 1.35rem;">@item.City</h4>
 
                             <p class="card-text text-muted position-relative z-1" style="font-size: 1.1rem;">@item.Description</p>
+                            @if (item.Photos.Any())
+                            {
+                                <div class="destination-card-photo-count">
+                                    <i class="bi bi-images me-2"></i>@item.Photos.Count photo@(item.Photos.Count == 1 ? string.Empty : "s")
+                                </div>
+                            }
                         </div>
                         <div class="card-footer bg-transparent border-top-0 p-4 pt-0 text-end">
                             <a asp-action="Details" asp-route-country="@item.Country" asp-route-city="@item.City" class="btn btn-outline-travel btn-lg">View Details</a>

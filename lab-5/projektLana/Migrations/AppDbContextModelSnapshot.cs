@@ -136,6 +136,55 @@ namespace projektLana.Migrations
                     b.ToTable("Destinations");
                 });
 
+            modelBuilder.Entity("projektLana.DestinationPhoto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("DestinationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("StoredFileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid?>("UploadSessionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DestinationId");
+
+                    b.HasIndex("UploadSessionId");
+
+                    b.ToTable("DestinationPhotos");
+                });
+
             modelBuilder.Entity("projektLana.Review", b =>
                 {
                     b.Property<int>("Id")
@@ -295,6 +344,16 @@ namespace projektLana.Migrations
                     b.Navigation("Trip");
                 });
 
+            modelBuilder.Entity("projektLana.DestinationPhoto", b =>
+                {
+                    b.HasOne("projektLana.Destination", "Destination")
+                        .WithMany("Photos")
+                        .HasForeignKey("DestinationId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Destination");
+                });
+
             modelBuilder.Entity("projektLana.Review", b =>
                 {
                     b.HasOne("projektLana.Destination", "Destination")
@@ -341,6 +400,8 @@ namespace projektLana.Migrations
                     b.Navigation("Accommodations");
 
                     b.Navigation("Activities");
+
+                    b.Navigation("Photos");
 
                     b.Navigation("Reviews");
 

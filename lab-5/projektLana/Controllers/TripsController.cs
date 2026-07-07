@@ -84,6 +84,8 @@ namespace projektLana.Controllers
             var trip = _context.Trips
                 .Include(t => t.User)
                 .Include(t => t.Destinations)
+                    .ThenInclude(d => d.Photos)
+                .Include(t => t.Destinations)
                     .ThenInclude(d => d.Activities)
                 .Include(t => t.Destinations)
                     .ThenInclude(d => d.Accommodations)

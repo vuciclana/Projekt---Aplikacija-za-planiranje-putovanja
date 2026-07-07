@@ -58,6 +58,8 @@
                             <span asp-validation-for="Description" class="text-danger small mt-2 d-block"></span>
                         </div>
 
+                        <partial name="_DestinationPhotoUploader" model="Model" />
+
                         <div class="d-flex gap-3 justify-content-between">
                             <a href="@ViewData["ReturnUrl"]" class="btn btn-outline-secondary btn-lg">
                                 <i class="bi bi-x-circle me-2"></i>Cancel
@@ -75,6 +77,7 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/destination-photos.js" asp-append-version="true"></script>
     <script>
         $(document).ready(function () {
             const form = document.getElementById('editDestinationForm');

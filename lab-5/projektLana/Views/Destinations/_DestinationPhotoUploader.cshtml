@@ -1,0 +1,43 @@
+@model projektLana.DestinationFormModel
+@{
+    var isEdit = Model.Id > 0;
+    var uploadSessionId = Model.UploadSessionId ?? Guid.NewGuid();
+    var listUrl = isEdit
+        ? Url.Action("Photos", "Destinations", new { id = Model.Id })
+        : Url.Action("PendingPhotos", "Destinations", new { uploadSessionId });
+    var uploadUrl = Url.Action("UploadPhoto", "Destinations");
+    var deleteUrlBase = Url.Action("DeletePhoto", "Destinations", new { photoId = 0 })?.Replace("/0", string.Empty);
+}
+
+<input type="hidden" id="UploadSessionId" name="UploadSessionId" value="@uploadSessionId" />
+
+<section class="destination-photos mt-5"
+         data-destination-photos
+         data-list-url="@listUrl"
+         data-upload-url="@uploadUrl"
+         data-delete-url-base="@deleteUrlBase"
+         data-destination-id="@(isEdit ? Model.Id.ToString() : string.Empty)"
+         data-upload-session-id="@uploadSessionId">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+        <div>
+            <h4 class="fw-bold mb-1" style="color: var(--travel-dark);">Uploaded files / Travel photos</h4>
+            <p class="text-muted mb-0">Add destination photos and manage existing uploads.</p>
+        </div>
+    </div>
+
+    <div class="dropzone destination-photo-dropzone">
+        <input type="file"
+               class="destination-photo-input"
+               accept="image/jpeg,image/png,image/gif,image/webp"
+               multiple
+               aria-label="Upload travel photos" />
+        <div class="dz-message">
+            <i class="bi bi-cloud-arrow-up-fill fs-1 d-block mb-2"></i>
+            <span class="fw-semibold">Drop travel photos here or click to upload</span>
+            <small class="text-muted d-block mt-1">JPG, PNG, GIF, or WebP up to 10 MB. You can also paste an image.</small>
+        </div>
+    </div>
+
+    <div class="destination-photo-status text-muted small mt-3" data-photo-status></div>
+    <div class="destination-photo-grid mt-3" data-photo-list></div>
+</section>

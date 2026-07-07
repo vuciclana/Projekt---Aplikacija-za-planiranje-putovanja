@@ -17,6 +17,7 @@ namespace projektLana.Data
         public DbSet<Accommodation> Accommodations { get; set; }
         public DbSet<Transport> Transports { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<DestinationPhoto> DestinationPhotos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -59,6 +60,12 @@ namespace projektLana.Data
                 .WithMany(d => d.Reviews)
                 .HasForeignKey(r => r.DestinationId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<DestinationPhoto>()
+                .HasOne(p => p.Destination)
+                .WithMany(d => d.Photos)
+                .HasForeignKey(p => p.DestinationId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

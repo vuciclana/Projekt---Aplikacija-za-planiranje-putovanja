@@ -4,6 +4,11 @@ namespace projektLana
 {
     public class DestinationFormModel
     {
+        public DestinationFormModel()
+        {
+            UploadSessionId = Guid.NewGuid();
+        }
+
         public int Id { get; set; }
 
         [Required(ErrorMessage = "City is required.")]
@@ -21,5 +26,7 @@ namespace projektLana
         public int? TripId { get; set; }
 
         public string? TripDisplayName { get; set; }
+
+        public Guid? UploadSessionId { get; set; }
     }
 }

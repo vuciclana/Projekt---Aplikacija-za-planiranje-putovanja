@@ -4,6 +4,7 @@ using projektLana.Data;
 using projektLana;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace projektLana.Controllers
 {
@@ -11,10 +12,17 @@ namespace projektLana.Controllers
     public class DestinationsController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _environment;  //objekt s kojim se može pristupiti informacijama o web hostingu, uključujući put do root direktorija web aplikacije
+        private const long MaxPhotoSize = 10 * 1024 * 1024;
+        private static readonly HashSet<string> AllowedPhotoExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".jpg", ".jpeg", ".png", ".gif", ".webp"
+        };
 
-        public DestinationsController(AppDbContext context)
+        public DestinationsController(AppDbContext context, IWebHostEnvironment environment)
         {
             _context = context;
+            _environment = environment;
         }
 
         private static string FormatTripDisplay(Trip trip)
@@ -35,12 +43,76 @@ namespace projektLana.Controllers
                 ? returnUrl
                 : Url.Action(nameof(Index));
         }
+        //podaci o putu do root direktorija web aplikacije
+        private string WebRootPath =>
+            _environment.WebRootPath ??
+            Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot");
+
+        private static string GetSafeFileName(string fileName)
+        {
+            var name = Path.GetFileNameWithoutExtension(fileName);
+            name = Regex.Replace(name, @"[^a-zA-Z0-9_-]+", "-").Trim('-');
+            return string.IsNullOrWhiteSpace(name) ? "photo" : name;
+        }
+
+        private static object ToPhotoJson(DestinationPhoto photo)
+        {
+            return new
+            {
+                id = photo.Id,
+                name = photo.OriginalFileName,
+                url = photo.FilePath,
+                size = photo.FileSize,
+                uploadedAt = photo.UploadedAt.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)
+            };
+        }
+
+        private async Task AttachPendingPhotosAsync(int destinationId, Guid uploadSessionId)
+        {
+            var pendingPhotos = await _context.DestinationPhotos
+                .Where(p => p.UploadSessionId == uploadSessionId && p.DestinationId == null)
+                .ToListAsync();
+
+            if (!pendingPhotos.Any())
+            {
+                return;
+            }
+
+            var destinationFolder = Path.Combine(WebRootPath, "uploads", "destinations", destinationId.ToString(CultureInfo.InvariantCulture));
+            Directory.CreateDirectory(destinationFolder);
+
+            foreach (var photo in pendingPhotos)
+            {
+                var oldRelativePath = photo.FilePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+                var oldFullPath = Path.Combine(WebRootPath, oldRelativePath);
+                var newFullPath = Path.Combine(destinationFolder, photo.StoredFileName);
+
+                if (System.IO.File.Exists(oldFullPath))
+                {
+                    if (System.IO.File.Exists(newFullPath))
+                    {
+                        System.IO.File.Delete(newFullPath);
+                    }
+
+                    System.IO.File.Move(oldFullPath, newFullPath);
+                }
+
+                photo.DestinationId = destinationId;
+                photo.UploadSessionId = null;
+                photo.FilePath = $"/uploads/destinations/{destinationId}/{photo.StoredFileName}";
+            }
+
+            await _context.SaveChangesAsync();
+        }
 
         public IActionResult Index()
         {
             var destinations = _context.Destinations
                 .Where(d => !d.IsDeleted)
                 .Include(d => d.Trip)
+                .Include(d => d.Photos.OrderBy(p => p.UploadedAt))
                 .ToList();
 
             return View(destinations);
@@ -54,6 +126,7 @@ namespace projektLana.Controllers
             var query = _context.Destinations
                 .Where(d => !d.IsDeleted)
                 .Include(d => d.Trip)
+                .Include(d => d.Photos.OrderBy(p => p.UploadedAt))
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -100,7 +173,7 @@ namespace projektLana.Controllers
 
         [HttpPost("create")]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(DestinationFormModel model, string? returnUrl)
+        public async Task<IActionResult> Create(DestinationFormModel model, string? returnUrl)
         {
             if (ModelState.IsValid && model.TripId.HasValue)
             {
@@ -113,7 +186,8 @@ namespace projektLana.Controllers
                 };
 
                 _context.Destinations.Add(destination);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
+                await AttachPendingPhotosAsync(destination.Id, model.UploadSessionId.GetValueOrDefault());
                 return RedirectToReturnUrl(returnUrl);
             }
 
@@ -146,7 +220,8 @@ namespace projektLana.Controllers
                 Country = destination.Country,
                 Description = destination.Description,
                 TripId = destination.TripId,
-                TripDisplayName = destination.Trip == null ? string.Empty : FormatTripDisplay(destination.Trip)
+                TripDisplayName = destination.Trip == null ? string.Empty : FormatTripDisplay(destination.Trip),
+                UploadSessionId = Guid.NewGuid()
             });
         }
 
@@ -181,6 +256,143 @@ namespace projektLana.Controllers
             return View(model);
         }
 
+        [HttpGet("{id:int}/photos")]
+        public async Task<IActionResult> Photos(int id)
+        {
+            var destinationExists = await _context.Destinations.AnyAsync(d => d.Id == id && !d.IsDeleted);
+            if (!destinationExists)
+            {
+                return NotFound();
+            }
+
+            var photos = await _context.DestinationPhotos
+                .Where(p => p.DestinationId == id)
+                .OrderByDescending(p => p.UploadedAt)
+                .ToListAsync();
+
+            return Json(photos.Select(ToPhotoJson));
+        }
+
+        [HttpGet("photos/pending")]
+        public async Task<IActionResult> PendingPhotos(Guid uploadSessionId)
+        {
+            if (uploadSessionId == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            var photos = await _context.DestinationPhotos
+                .Where(p => p.UploadSessionId == uploadSessionId && p.DestinationId == null)
+                .OrderByDescending(p => p.UploadedAt)
+                .ToListAsync();
+
+            return Json(photos.Select(ToPhotoJson));
+        }
+
+        [HttpPost("photos/upload")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadPhoto(int? id, Guid uploadSessionId, IFormFile? file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new { error = "Select a photo to upload." });
+            }
+
+            if (file.Length > MaxPhotoSize)
+            {
+                return BadRequest(new { error = "Photos must be 10 MB or smaller." });
+            }
+
+            var extension = Path.GetExtension(file.FileName);
+            if (!AllowedPhotoExtensions.Contains(extension) || !file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest(new { error = "Only JPG, PNG, GIF, and WebP images are allowed." });
+            }
+
+            Destination? destination = null;
+            if (id.HasValue)
+            {
+                destination = await _context.Destinations.FirstOrDefaultAsync(d => d.Id == id.Value && !d.IsDeleted);
+                if (destination == null)
+                {
+                    return NotFound();
+                }
+            }
+            else if (uploadSessionId == Guid.Empty)
+            {
+                return BadRequest(new { error = "Missing upload session." });
+            }
+
+            var storedFileName = $"{GetSafeFileName(file.FileName)}-{Guid.NewGuid():N}{extension.ToLowerInvariant()}";
+            var relativeFolder = destination == null
+                ? $"uploads/destinations/pending/{uploadSessionId}"
+                : $"uploads/destinations/{destination.Id}";
+            var uploadFolder = Path.Combine(WebRootPath, relativeFolder.Replace('/', Path.DirectorySeparatorChar));
+            Directory.CreateDirectory(uploadFolder);
+
+            var fullPath = Path.Combine(uploadFolder, storedFileName);
+            await using (var stream = System.IO.File.Create(fullPath))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            var photo = new DestinationPhoto
+            {
+                OriginalFileName = Path.GetFileName(file.FileName),
+                StoredFileName = storedFileName,
+                ContentType = file.ContentType,
+                FilePath = $"/{relativeFolder}/{storedFileName}",
+                FileSize = file.Length,
+                UploadedAt = DateTime.UtcNow,
+                DestinationId = destination?.Id,
+                UploadSessionId = destination == null ? uploadSessionId : null
+            };
+
+            _context.DestinationPhotos.Add(photo);
+            await _context.SaveChangesAsync();
+
+            return Json(ToPhotoJson(photo));
+        }
+
+        [HttpDelete("photos/{photoId:int}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeletePhoto(int photoId, Guid? uploadSessionId)
+        {
+            var photo = await _context.DestinationPhotos
+                .Include(p => p.Destination)
+                .FirstOrDefaultAsync(p => p.Id == photoId);
+
+            if (photo == null)
+            {
+                return NotFound();
+            }
+
+            var isPendingOwner = uploadSessionId.HasValue &&
+                                 uploadSessionId.Value != Guid.Empty &&
+                                 photo.UploadSessionId == uploadSessionId.Value &&
+                                 photo.DestinationId == null;
+            var isDestinationPhoto = photo.DestinationId.HasValue &&
+                                     photo.Destination != null &&
+                                     !photo.Destination.IsDeleted;
+
+            if (!isPendingOwner && !isDestinationPhoto)
+            {
+                return NotFound();
+            }
+
+            var relativePath = photo.FilePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+            var fullPath = Path.Combine(WebRootPath, relativePath);
+            if (System.IO.File.Exists(fullPath))
+            {
+                System.IO.File.Delete(fullPath);
+            }
+
+            _context.DestinationPhotos.Remove(photo);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { deleted = true });
+        }
+
         [HttpGet("delete/{id:int}")]
         public IActionResult Delete(int id, string? returnUrl)
         {
@@ -212,6 +424,7 @@ namespace projektLana.Controllers
         {
             var item = _context.Destinations
                 .Include(d => d.Trip)
+                .Include(d => d.Photos.OrderBy(p => p.UploadedAt))
                 .Include(d => d.Activities.Where(a => !a.IsDeleted))
                 .Include(d => d.Accommodations.Where(a => !a.IsDeleted))
                 .Include(d => d.Transports.Where(t => !t.IsDeleted))
